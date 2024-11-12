@@ -3,6 +3,12 @@
 |                                                                      |
 |       Copyright (c)2000-2011  Gratien D'haese - IT3 Consultants      |
 |                                                                      |
+|             *****************************************                |
+|             *** mkCDrec is NOT maintained anymore ***                |
+|             *****************************************                |
+|                                                                      |
+|             Use Relax-and-Recover (ReaR) instead !                   |
+|             *** https://relax-and-recover.org/ ***                   |
 +----------------------------------------------------------------------+
 
     This program is free software; you can redistribute it and/or modify 
@@ -20,7 +26,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 This backup solution contains the work of a lot of other people too. See
-http://mkcdrec.ota.be/credits.html for some of them.
+https://mkcdrec.sourceforge.net/credits.html for some of them.
 My parts stands under the GNU Public License (see the file COPYING). 
 For all the other people's work, check their licenses. 
 
@@ -37,7 +43,5 @@ system first before playing with mkCDrec. Do not yell at me when you loose
 data due to mkCDrec and you forgot to backup first!
 ******************************************************************************
 
-For more information about it, see http://mkcdrec.ota.be/index.html .
+For more information about it, see https://mkcdrec.sourceforge.net/
 
-If you like this piece of software then make a small donation at:
-http://sourceforge.net/donate/index.php?group_id=25327
