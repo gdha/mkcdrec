@@ -1,0 +1,110 @@
+# For non-pivot_root interface:
+# 257 = 0x0101 = 01:01 = /dev/ram1 = /dev/rd/1
+ROOT_NUM=257
+
+# for OBDR tape read rd-base.img.bz2 from tape instead of mounted CDROM.
+if [ "${OBDR}" = "true" ]; then
+
+  echo "One Button Disaster Recovery (OBDR) Procedure:"
+  echo "OBDR: positioning the tape..."
+  mt -f ${TAPE_DEV} rewind
+  mt -f ${TAPE_DEV} fsf 2
+  echo "OBDR: reading ram disk image into /dev/ram1 or /dev/rd/1"
+  if [ -b /dev/ram1 ]; then
+	ROOT_DEV=/dev/ram1
+	dd if=${TAPE_DEV} | bzip2 -dc > /dev/ram1
+	ERR=$?
+  elif [ -b /dev/rd/1 ]; then
+	ROOT_DEV=/dev/rd/1
+	dd if=${TAPE_DEV} bs=512 | bzip2 -dc > /dev/rd/1
+	ERR=$?
+  else
+	echo 'OBDR: can not find a RAM disk for root at /dev/ram1 or /dev/rd/1!'
+	echo Being desparate, I will try to open a /bin/sh.
+        /bin/sh
+  fi
+  if [ ${ERR} -eq 0 ]; then
+	echo "OBDR: ram disk image loaded successfully from ${TAPE_DEV}"
+  else
+	echo "OBDR: problem with reading ram disk from ${TAPE_DEV}"
+	echo Being desparate, I will try to open a /bin/sh.
+	/bin/sh
+  fi
+# end of OBDR
+elif [ "${EFI}" = "true" ]; then
+  # EFI is used with IA64 architecture
+  echo "Try to find a CD-ROM or USB device..."
+  if [ -x /linuxrc_pre ]; then
+     . /linuxrc_pre
+  fi
+  if [ ! -f /mnt/rd-base.img.bz2 ]; then
+     # IA64: try local disk boot
+     echo "mount -t vfat ${EFI_DEV} /boot/efi"
+     mount -t vfat ${EFI_DEV} /boot/efi
+     ERR=$?
+     if [ ${ERR} -eq 0 ]; then
+        echo "Successfully mounted $EFI_DEV on /boot/efi"
+     fi
+  fi
+
+  if [ -b /dev/ram1 ]; then
+        ROOT_DEV=/dev/ram1
+  elif [ -b /dev/rd/1 ]; then
+        ROOT_DEV=/dev/rd/1
+  else
+        echo 'EFI: can not find a RAM disk for root at /dev/ram1 or /dev/rd/1!'
+        echo Being desparate, I will try to open a /bin/sh.
+        /bin/sh
+  fi
+
+  if [ -f /mnt/rd-base.img.bz2 ]; then
+     INITRDIMG=/mnt/rd-base.img.bz2
+     echo "Read rd-base.img from media"
+     bzip2 -dc /mnt/rd-base.img.bz2 > $ROOT_DEV
+     ERR=$?
+  else
+     INITRDIMG=/boot/efi/efi/recovery/rd-base.img.bz2
+     echo "Read rd-base.img from /boot/efi"
+     bzip2 -dc /boot/efi/efi/recovery/rd-base.img.bz2 > $ROOT_DEV
+     ERR=$?
+     # free /boot/efi otherwise it stays mounted in the background!
+     # When using RAMFS do not yet umount it
+     [ "${RAMFS}" = "true" ] || umount /boot/efi
+  fi
+  if [ ${ERR} -eq 0 ]; then
+      echo "Successfully wrote rd-base.img to $ROOT_DEV"
+  else
+      echo Being desparate, I will try to open a /bin/sh.
+      /bin/sh
+  fi
+# end of EFI
+elif [ "${RAMFS}" = "true" ]; then
+     INITRDIMG=/mnt/rd-base.img.bz2
+     ROOT_DEV=/dev/ram1
+     [ -b /dev/rd/1 ] && ROOT_DEV=/dev/rd/1
+     # when ROOT_FS is ramfs then we wait until /new_root has been mounted
+     # as tmpfs before bunzip2
+     if [ "${ROOT_FS}" != "ramfs" ]; then
+	echo "Loading ramdisk ${INITRDIMG} [type ${ROOT_FS} ] from media. Please wait ..."
+	bzip2 -dc ${INITRDIMG} > ${ROOT_DEV}
+     fi
+else # catch all
+  if [ -f /mnt/custom-rd.img.bz2 ]; then
+     INITRDIMG=/mnt/custom-rd.img.bz2
+  else
+     INITRDIMG=/mnt/rd-base.img.bz2
+  fi
+  echo "Loading ramdisk ${INITRDIMG} from media. Please wait ..."
+  # For pivot_root interface:
+  if [ -b /dev/ram1 ]; then
+	ROOT_DEV=/dev/ram1
+        bzip2 -dc ${INITRDIMG} > /dev/ram1
+  elif [ -b /dev/rd/1 ]; then
+	ROOT_DEV=/dev/rd/1
+        bzip2 -dc /mnt/${INIRDIMG} > /dev/rd/1
+  else
+	echo 'Can not find a RAM disk for root at /dev/ram1 or /dev/rd/1!'
+	echo Being desparate, I will try to open a /bin/sh.
+        /bin/sh
+  fi
+fi # of OBDR

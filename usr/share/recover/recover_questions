@@ -1,0 +1,160 @@
+# This file includes the questions needed by recover.
+# If you want to add a language, insert it in [languages],
+# and insert the translated sentences at the same place as 
+# you did it with [languages] (keep EN at top!)
+# Dutch/English support by Tom Pycke <Tom.Pycke@advalvas.be>
+# Portuguese and Spanish support by Osvaldo J. Filho <osvaldojaneri@uol.com.br>
+# German support by Peter Suetterlin <P.Suetterlin@astro.uu.nl>
+# French support by Denis Bodor <d.bodor@calixo.net>
+# recover is already translated in:
+
+[languages]
+EN ENG english
+PT PT_BR portugese
+NL BE_NL DUTCH
+DE GER german
+FR francais franáais
+ES espanol Espanol
+
+# Here are the questions:
+
+[ask_device]
+Please enter the partition's device name:
+Entre com o nome do device a usar:
+Gelieve de naam van het device te geven:
+Geben Sie den Namen der Partition ein:
+Entrez le nom du peripherique partition SVP:
+Entre com el nombre de dispositivo de la particiõn:
+
+[ask_year]
+In what year did you delete the file? (eg. 1999): 
+Em que ano voce apagou o arquivo? (ex. 1999): 
+In welk jaar heeft u het bestand verwijderd? (bv. 1999): 
+In welchem Jahr wurde die Datei gel˜scht? (z.B. 2000)
+Quelle annee avez-vous efface le fichier? (ex. 1999):
+En quÇ a±o usted suprimiõ el fichero? (eg. 1999):
+
+[ask_month]
+In what month did you delete the file? 
+Em que mes voce apagou o arquivo? 
+In welke maand heeft u het bestand verwijderd? 
+In welchem Monat wurde die Datei gel˜scht?
+Quel mois avez-vous efface le fichier?
+En quÇ mes usted suprimiõ el fichero?
+
+[month_eg]
+(Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec or -1=unknown): 
+(Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec or -1=desconhecido):
+(Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec of -1=ongekend): 
+(Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec of -1=unbekannt): 
+(Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec of -1=inconnu):
+(Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec of -1=desconocido):
+
+[ask_weekd]
+On which day of the week did you delete the file? 
+Em que dia da semana voce apagou o arquivo? 
+Tijdens welke dag van de week heeft u het bestand verwijderd? 
+An welchem Wochentag wurde die Datei gel˜scht?
+Quel jour avez-vous efface le fichier?
+En quÇ d≠a de la semana usted suprimiõ el fichero?
+
+[weekd_eg]
+(Mon, Tue, Wed, Thu, Fri, Sat, Sun or -1=unknown): 
+(Mon, Tue, Wed, Thu, Fri, Sat, Sun of -1=desconhecido):
+(Mon, Tue, Wed, Thu, Fri, Sat, Sun of -1=onbekend): 
+(Mon, Tue, Wed, Thu, Fri, Sat, Sun of -1=unbekannt): 
+(Mon, Tue, Wed, Thu, Fri, Sat, Sun of -1=inconnu):
+(Mon, Tue, Wed, Thu, Fri, Sat, Sun ou -1=desconocido):
+
+
+[ask_day1]
+What was the first possible day of the month on which you deleted the file? (1 - 31): 
+Qual foi o primeiro possivel dia do mes no qual voce apagou o arquivo? (1 - 31): 
+Welke was de eerst mogelijke dag van de maand waarop u het bestand verwijderde? (1 - 31): 
+An welchem Tag des Monats wurde die Datei frÅhestens gel˜scht? (1 - 31):
+Quel est le premier jour du mois ou vous avez pu effacer le fichier? (1 - 31):
+Cuﬂl era el primer d≠a posible del mes en el cual usted suprimido el fichero? (1 - 31):
+
+
+[ask_day2]
+What was the last possible day of the month on which you deleted the file? (1 - 31): 
+Qual foi o ultimo possivel dia do mes no qual voce apagou o arquivo? (1 - 31): 
+Welke was de laatst mogelijke dag van de maand waarop u het bestand verwijderde? (1 - 31): 
+An welchem Tag des Monats wurde die Datei spÑtestens gel˜scht? (1 - 31):
+Quel est le dernier jour du mois ou vous avez pu effacer le fichier? (1 - 31):
+Cuﬂl era el d≠a posible pasado del mes en el cual usted suprimido el fichero? (1 - 31):
+
+[ask_minsize]
+What was the minimum possibly file size in bytes? (0-2147483640): 
+Qual o tamanho minimo do arquivo em bytes? (0-2147483640): 
+Wat was de minimum mogelijke grootte van het bestand? (0-2147483640): 
+Wie groò war die Datei mindestens? (0-2147483640):
+Quelle est la taille minimum du fichier en octets ? (0-2147483640):
+Cuﬂl era el tama±o del archivo del m≠nimo posiblemente en bytes? (0-2147483640): 
+
+[ask_maxsize]
+What was the maximum possibly file size in bytes? (0-2147483640): 
+Qual o tamanho maximo do arquivo em bytes? (0-2147483640): 
+Wat was de maximum mogelijke grootte van het bestand? (0-2147483640): 
+Wie groò war die Datei h˜chstens? (0-2147483640):
+Quelle est la taille maximum du fichier en octets ? (0-2147483640):
+Cuﬂl era el tama±o del archivo del mﬂximo posiblemente en bytes? (0-2147483640):
+
+[ask_hour1]
+What was the soonest possible hour(0-23) when you deleted the file? 
+Qual foi a hora mais cedo possivel (0-23) de quando voce apagou o arquivo? 
+Wat was het vroegst mogelijke uur(0-23) waarop u het bestand verwijderde? 
+Zu welcher Stunde wurde die Datei frÅhestens gel˜scht? (0 - 23):
+Quelle est l'heure(0-23) d'effacement la plus tot ?
+Cuﬂl era el hour(0-23) lo mﬂs pronto posible cuando usted suprimiõ el fichero?
+
+[ask_hour2]
+What was the latest possible hour(0-23) when you deleted the file? 
+Qual foi a hora mais tarde possivel (0-23) de quando voce apagou o arquivo? 
+Wat was het laatst mogelijke uur(0-23) waarop u het bestand verwijderde? 
+Zu welcher Stunde wurde die Datei spÑtestens gel˜scht? (0 - 23):
+Quelle est l'heure(0-23) d'effacement la plus tard ?
+Cuﬂl era hour(0-23) posible mﬂs finales de cuando usted suprimiõ el fichero?
+
+
+[ask_min1]
+What was the soonest possible minute(0-59) when you deleted the file? 
+Qual foi o minuto mais cedo possivel (0-59) de quando voce apagou o arquivo? 
+Wat was de vroegst mogelijke minuut(0-59) waarop u het bestand verwijderde? 
+Zu welcher Minute wurde die Datei frÅhestens gel˜scht? (0 - 59):
+Quelle est la minute(0-59) d'effacement la plus tot ?
+Cuﬂl era el minute(0-59) lo mﬂs pronto posible cuando usted suprimiõ el fichero?
+
+
+[ask_min2]
+What was the latest possible minute(0-59) when you deleted the file? 
+Qual foi o minuto mais tarde possivel (0-59) de quando voce apagou o arquivo? 
+Wat was de laatst mogelijke minuut(0-59) waarop u het bestand verwijderde? 
+Zu welcher Minute wurde die Datei spÑtestens gel˜scht? (0 - 59):
+Quelle est la minute(0-59) d'effacement la plus tard ?
+Cuﬂl era el minute(0-59) posible mﬂs finales cuando usted suprimiõ el fichero?
+
+
+[ask_id]
+What was the user ID of the deleted the file? (-1 if you have no idea): 
+Qual era o user id do arquivo apagado? (-1 se voce nao tem ideia): 
+Wat was de user ID van het verwijderde bestand? (-1 als je geen idee hebt): 
+Welchem Nutzer (UID) geh˜rte die gel˜schte Datei? (-1 wenn Sie es nicht wissen):
+Quel est ID utilisateur du fichier efface? (-1 si vous ne savez pas):
+Cuﬂl era la ID del usuario del suprimido el fichero? (-1 si usted no tiene ninguna idea):
+
+[ask_dump]
+inodes found. Where shall i dump them? (directory): 
+inodes achados. Onde eu devo dumpar eles? (diretorio): 
+inodes gevonden. Waar zal ik ze dumpen? (directory): 
+inodes wurde(n) gefunden.  Wohin sollen sie gespeichert werden? (Verzeichnis):
+inodes trouves. Dois-je les dumper? (repertoire):
+los inodes encontraron. Dõnde vaciarlos? (directorio):
+
+[ask_refilter]
+Do you want to refilter the inodes? 
+Voce quer refiltrar os inodes? 
+Wil je de inodes opnieuw filteren? 
+Wollen Sie die Inodes ein weiteres Mal durchsuchen?
+Voulez-vous refiltrer les inodes?
+Usted desea filtrar de nuevo los inodes?

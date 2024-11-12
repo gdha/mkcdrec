@@ -1,0 +1,167 @@
+*****************************************
+*	R E A D M E - mediacheck	*
+*****************************************
+
+Some history:
+On a regular basis people ask questions concerning burning images to a CD-R(W)
+and how to verify if the iso 9660 image was burned correctly.
+There exist quiet a lot of documents on above items, e.g. check the following 
+document "How to burn an ISO image"  at URL:
+http://www.e-smith.org/docs/howto/CD_burning_howto.txt
+
+Other more in-depth documents describe the ISO 9660 layout:
+- Writing Bootable CD-ROM: Try This At Home by Rob Starrett
+  http://www.cdpage.com/Compact_Disc_Variations/bootablecdarticle.htm
+- The ISO 9660 File System by Gratien D'haese
+  http://www.it3.be/handouts/ISO9960.html
+
+The purpose (or goal):
+Personally I find the md5sum calculation on ISO9660 images very useful, but
+I seems to loose them all the time and therefore falling into the trap of
+having badly images burned on CD-Rs, e.g. my latest RedHat 7.3 installation
+failed because I forgot the check the md5sum on CD2 (very frustrating!).
+But, I also noticed that RedHat CDs have a md5sum label burned into the image
+itself. You can check all the RedHat CDs by selecting "linux mediacheck" at
+the first bootstrap phase. Works like a charm. So, I wondered why don't we
+try to do the same on mkCDrec made CDs - must be possible. No need anymore to
+write down md5sum (written in the mkcdrec.log) - plain simple: stamp the md5sum
+onto the ISO9660 image itself.
+
+The search:
+After some time searching on the Net I found the needed sources at RedHat -
+anaconda-7.3.tar.bz2
+Just took the bare minimum sources to check and implant the md5 onto a given
+ISO9660 image. For fun, grabbed also the graphical mediacheck sources.
+Give them some little tweaks needed to compile (made a special Makefile for
+those sources). The credit goes to RedHat and in particular to
+Michael Fulbright (msf@redhat.com) for writing this wonderful piece of
+software!
+
+The Primary Volume Descriptor (PVD) on ISO9660 images:
+For more information on PVD see above mentioned articles.
+To examine an image I found another jewel called hexdump
+from http://www.muppetlabs.com/~breadbox/software/tiny/ (226 bytes long!)
+
+hexdump on a non-md5 branded CDrec.iso shows:
+00008370: F001 0020 2020 2020 2020 2020 2020 2020  0x8373 is the beginning of 
+00008380: 2020 2020 2020 2020 2020 2020 2020 2020  application_data area in PVD
+00008390: 2020 2020 2020 2020 2020 2020 2020 2020                  
+000083A0: 2020 2020 2020 2020 2020 2020 2020 2020                  
+000083B0: 2020 2020 2020 2020 2020 2020 2020 2020                  
+000083C0: 2020 2020 2020 2020 2020 2020 2020 2020                  
+000083D0: 2020 2020 2020 2020 2020 2020 2020 2020                  
+000083E0: 2020 2020 2020 2020 2020 2020 2020 2020                  
+000083F0: 2020 2020 2020 2020 2020 2020 2020 2020
+
+hexdump on a md5 branded valhalla-i386-disc2.iso
+0008370 01f0 4900 4f53 4d20 3544 5553 204d 203d
+0008380 6666 3439 3966 3635 6135 6530 6634 3131
+0008390 3065 6564 3839 3630 6338 3866 6561 6662
+00083a0 2000 4854 5349 4920 2053 4f4e 2054 4854
+00083b0 2045 4153 454d 4120 2053 5552 4e4e 4e49
+00083c0 2047 444d 5335 4d55 4f20 204e 4854 5349
+00083d0 4920 4f53 2021 2020 2020 2020 2020 2020
+00083e0 2020 2020 2020 2020 2020 2020 2020 2020
+
+strings /tmp/Cdrec.iso shows the corresponding text:
+ISO MD5SUM = 859edd48ad28ce3bbd4e95ce39d6d405
+ THIS IS NOT THE SAME AS RUNNING MD5SUM ON THIS ISO!
+
+The last sentence is VERY important to understand! The software from RedHat
+calculates the md5sum of the data area on the ISO9660 image and not over the
+complete image, which is not possible as writing the md5 would change the md5
+of the image otherwise.
+
+The usage:
+# make
+will compile 2 executables (checkisomd5 and implantisomd5)
+# make mediacheck
+will compile a graphical newt based executable "mediacheck" (need libraries
+newt and slang). Get the best suited RPMs (or whatever) for your distribution:
+  - libnewt0.50-devel-0.50.34-2mdk.i586.rpm
+  - slang-devel-1.4.4-4.i386.rpm
+# make clean
+cleans up all objects and executables.
+
+# make install
+will copy checkisomd5 and implantisomd5 to /usr/bin directory
+(mediacheck has to be copied by hand if you want to install it).
+
+Checking an unbranded image results into:
+$ ./checkisomd5 ~/CDrec.iso
+
+FÓ
+No checksum information in iso, check skipped.
+$ echo $?
+255
+==> 255 means not branded with a md5sum
+
+Checking a branded one:
+$ ./checkisomd5 ~/valhalla-i386-disc2.iso
+Read     0 MB
+Read    50 MB
+Read   100 MB
+Read   150 MB
+Read   200 MB
+Read   250 MB
+Read   300 MB
+Read   350 MB
+Read   400 MB
+Read   450 MB
+Read   500 MB
+Read   550 MB
+Read   600 MB
+Read   650 MB
+ff94f9565a0e4f11e0de98068cf8aebf
+ff94f9565a0e4f11e0de98068cf8aebf
+Md5sums match.
+$ echo $?
+1
+==> "1" means md5sums matches and "0" when different.
+
+Let us try to implant a md5sum into a already branded image:
+$ ./implantisomd5 ~/valhalla-i386-disc2.iso
+Application data has been used - not implanting md5sum!
+$ echo $?
+1
+
+$ ./implantisomd5 ~/CDrec.iso
+Read     0 MB
+Inserting md5sum into iso image...
+md5 = 859edd48ad28ce3bbd4e95ce39d6d405
+Done!
+$ echo $?
+0
+
+and check it again:
+$ ./checkisomd5 ~/CDrec.iso
+Read     0 MB
+859edd48ad28ce3bbd4e95ce39d6d405
+859edd48ad28ce3bbd4e95ce39d6d405
+Md5sums match.
+
+./mediacheck  ~/CDrec.iso
+presents a nice blue-colored newt based check utility (really great).
+
+The Future:
+These tools should made available as a separate rpm to be installed on all
+GNU/Linux based systems. I decided to add these tools to mkCDrec distribution
+for general consumption. Of course, mkCDrec v0.6.5 will start using them.
+
+I guess if enough people ask it to RedHat they might consider to make it
+available as a seperate RPM bundle. If not, and only under pressure,
+I could made a rpm release seperate from mkCDrec.
+
+Yours faithfully,
+Gratien D'haese
+IT3 Consultants
+
+Closing remark:
+This was done within a few hours (including thinking, experimenting and fetching
+the sources). Imagine a "closed" software world and it would have taken me
+weeks to write something similar (and probably not as good!).
+Thank you RedHat Inc. for the "openess" of your software and of course in
+particular Michael Fulbright (msf@redhat.com).
+
+Date:
+16 June 2002

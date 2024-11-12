@@ -1,0 +1,94 @@
+#!/bin/bash
+
+echo "PXE Preparation Script for mkCDrec"
+echo "----------------------------------"
+
+# small functions
+fatal() { echo "fatal: $*"; exit 1; }
+usage() { echo "usage: $0 [-i /target/directory/] [-p /pxe/config/]"; exit 0; }
+
+# load mkCDrec configuration
+if [ -f /var/opt/mkcdrec/Config.sh ] ; then
+	cd /var/opt/mkcdrec && . ./Config.sh 2>/dev/null && cd -
+else
+	fatal "Can't load /var/opt/mkcdrec/Config.sh"
+fi
+
+# local configuration
+TARGET_DIR=$ISOFS_DIR/../pxeroot
+PXECFG_DIR=$ISOFS_DIR/../pxeconf
+TMP_DISKIMG=`mktemp -t diskimg.XXXXXX`    || fatal "Can't create a temporary file name"
+TMP_DISKDIR=`mktemp -t -d diskdir.XXXXXX` || fatal "Can't create a temporary directory name"
+
+trap 'rm -f $TMP_DISKIMG && rmdir $TMP_DISKDIR' SIGHUP SIGINT SIGTERM EXIT
+
+# parse options
+while getopts :hi:p: opt ; do
+	case $opt in
+		h) usage ;;
+		i) TARGET_DIR=$OPTARG ;;
+		p) PXECFG_DIR=$OPTARG ;;
+		*) usage ;;
+	esac
+done
+
+echo "Settings: ISOFS_DIR=$ISOFS_DIR"
+echo "          TARGET_DIR=$TARGET_DIR"
+echo "          PXECFG_DIR=$PXECFG_DIR"
+echo
+
+mkdir -p $TARGET_DIR || fatal "Can't create directory '$TARGET_DIR'"
+mkdir -p $PXECFG_DIR || fatal "Can't create directory '$PXECFG_DIR'"
+
+# unpacking base ramdisk
+echo -n " >> Unpacking base ramdisk.. "
+bzip2 -cd $ISOFS_DIR/rd-base.img.bz2 >$TMP_DISKIMG
+echo -n "mounting.. "
+mount -o loop,ro $TMP_DISKIMG $TMP_DISKDIR
+echo -n "copying content.. "
+( cd $TMP_DISKDIR && cp -R . $TARGET_DIR )
+echo "done"
+umount $TMP_DISKDIR
+
+# unpacking init ramdisk
+echo -n " >> Unpacking init ramdisk.. "
+gzip -cd $ISOFS_DIR/isolinux/initrd.gz >$TMP_DISKIMG
+echo -n "mounting.. "
+mount -o loop,ro $TMP_DISKIMG $TMP_DISKDIR
+echo -n "copying content.. "
+( cd $TMP_DISKDIR && cp -R . $TARGET_DIR/initrd/ )
+echo "done"
+umount $TMP_DISKDIR
+
+# copying kernel
+echo -n " >> Copying boot kernel.. "
+cp $ISOFS_DIR/isolinux/linux $TARGET_DIR/boot/
+echo "done"
+
+# creating PXE configuration files
+echo -n " >> Creating PXE configuration files.. "
+mkdir -p $PXECFG_DIR/pxelinux.cfg
+cp $ISOFS_DIR/isolinux/{message.msg,mkcdrec.lss} $PXECFG_DIR
+NFS_SERVER=$(host $(df $ISOFS_DIR | tail -1 | awk '{print $1}' | cut -d: -f1) | cut -d' ' -f4)
+cat >$PXECFG_DIR/pxelinux.cfg/default <<END
+default 2
+timeout 40
+display message.msg
+F1 message.msg
+
+label 0
+  localboot 1
+
+label 1
+
+label 2
+  kernel mkcdrec/linux
+  append rw root=/dev/nfs nfsroot=$NFS_SERVER:$TARGET_DIR ip=both acpi=off ${KERNEL_APPEND}
+END
+echo "done"
+echo "      Samples PXE configuration files have been created in PXECFG_DIR."
+
+# fixing mkCDrec settings
+echo -n " >> Fixing mkCDrec settings.. "
+echo "NET" >$TARGET_DIR/etc/recovery/Backup_made_at_*
+echo "done"

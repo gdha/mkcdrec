@@ -1,0 +1,18 @@
+#!/bin/sh
+# ============================================================
+#  This script gets control at the very end of building the 
+#    CDROM image.  You can add new files/directories to the
+#    CDROM by referencing ISOFS_DIR.
+#
+#  Some environment variables
+#    ISOFS_DIR       the base directory for the ISO (i.e. all this stuff
+#                      will go on the disk but will not automatically be
+#                      loaded into memory.
+# =============================================================
+cwd=`pwd`
+# Pull in environment variables we need
+. ./Config.sh 2>/dev/null
+#
+#  Example:
+#  cp -dRp <your-directory> ${ISOFS_DIR}/
+#

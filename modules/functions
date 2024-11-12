@@ -1,0 +1,2 @@
+# functions is dotted by e.g. pppoe (typically Redhat!)
+INITS="$INITS /etc/init.d/functions"

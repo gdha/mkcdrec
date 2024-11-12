@@ -1,0 +1,3 @@
+var/opt/mkcdrec
+usr/sbin/mkcdrec
+usr/share/man/man8/*.gz

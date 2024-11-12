@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+if [ $1 != "upgrade" ] ; then
+	make -C /var/opt/mkcdrec clean >/dev/null 2>&1 || true
+	rm -f /var/opt/mkcdrec/busybox/.config
+	rm -f /var/opt/mkcdrec/scripts/makeISO9660.sh
+	rm -rf /var/opt/mkcdrec/stage
+fi

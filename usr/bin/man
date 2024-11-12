@@ -1,0 +1,1 @@
+clear; gunzip -c /usr/man/$1.gz |more

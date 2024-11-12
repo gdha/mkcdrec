@@ -1,0 +1,8 @@
+ETC_FILES="$ETC_FILES udev/links.conf udev/udev.conf udev/cdsymlinks.conf"
+
+BINARIES="$BINARIES udevd udev_input_coldplug udevsend pam_console_apply fgrep udev udev_input_helper udev-Net_helper udev_run_hotplugd udev_run_devd udevstart udevrulescompile udevcontrol \
+ udevsettle udevtrigger"
+
+MAN_PAGES="$MAN_PAGES udev udevd hotplug"
+
+INITS="$INITS /etc/init.d/udev"

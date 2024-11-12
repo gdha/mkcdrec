@@ -1,0 +1,64 @@
+# look through all the cdroms for the boot cd
+mountBootDev()
+{
+  for bootdev in $*; do
+    echo -n "$bootdev "
+    mount -t $cdfstype -o $cdfsopts /dev/$bootdev /mnt 2>/dev/null
+    if [ -f /mnt/rd-base.img.bz2 ]; then
+      echo "."
+      cdbootdev=$bootdev
+      return
+    else
+      umount /dev/$bootdev 2>/dev/null
+    fi
+  done
+}
+
+mount -n -t proc proc /proc 2> /dev/null || mount -t proc proc /proc
+
+echo "Wait a few seconds to ensure all modules are activated and ready..."
+sleep 5
+
+if grep -q mkcdrec_on_usbkey /proc/cmdline 2> /dev/null ; then
+  cdfstype="vfat"
+  cdfsopts="ro,shortname=winnt"
+  cddev="$cddev "`cd /dev; echo sd*`
+  cddev="$cddev "`cd /dev; echo ubd*`
+else
+  cdfstype="iso9660"
+  cdfsopts="ro"
+  # look through all the ide devices for cdroms.
+  # SuSE 10.1 adds SCSI cdrom as /dev/srx device, /dev/scdx does not exist when using udev
+  # therefore look for /dev/sr* first!
+  cddev="$cddev "`cd /dev; echo sr*`
+  cddev="$cddev "`cd /dev; echo scd*`
+  for idedev in `cd /proc/ide; echo hd?`; do
+    grep "cdrom" /proc/ide/$idedev/media > /dev/null && cddev="$cddev $idedev"
+  done
+  cddev="$cddev "`cd /dev; echo cdroms/*`
+  cddev="$cddev "`cd /dev; echo ubd*`
+fi
+
+umount /proc
+mountBootDev $cddev
+
+if [ "X$cdbootdev" != "X" ]; then 
+  echo Mkcdrec media found on device /dev/$cdbootdev.
+  # save the device for remounting later
+  if [ -f /ramfs ]; then
+    echo "No RAM disk device available, saving Mkcdrec media later"
+  elif [ -b /dev/ram2 ]; then
+    echo /dev/$cdbootdev > /dev/ram2
+  elif [ -b /dev/rd/2 ]; then
+    echo /dev/$cdbootdev > /dev/rd/2
+  else
+    echo 'Can not find a RAM disk device /dev/ram2 or /dev/rd/2!'
+    echo I will not be able to determine boot device.
+  fi
+elif [ "${EFI}" = "true" ]; then
+  echo "IA64 system - no devs found - check /boot/efi"
+else
+  echo "I could not find the media!  It is not one of \"$cddev\"."
+  echo Being desparate, I will try to open a /bin/sh.
+  /bin/sh
+fi

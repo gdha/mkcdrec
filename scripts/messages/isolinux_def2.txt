@@ -1,0 +1,17 @@
+
+    Make CD-ROM Recovery (mkCDrec) - GPL Copyright (c) 2000-2010
+          by Gratien D'haese (gdha@users.sourceforge.net)
+
+              _   _        _    
+    -,--,--. | | / / ___ _| |_ _       __
+   |  _   _ \| `/ / / _/'_` | '_)___  / _/
+   | | | | | | , ( ( (_ (_| | | / -_)( (__
+   |_| |_| |_|_|\_\ \__\__,_|_| \___| \___\
+
+    SYSTEMID
+
+    Select one of the following items:
+
+       0 - HD/MBR boot
+       1 - Floppy boot
+       2 - Enter rescue / restore mode, local vga console [default]

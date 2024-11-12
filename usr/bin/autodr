@@ -1,0 +1,25 @@
+#!/bin/bash
+# Purpose of script is to give user a chance to interrupt the Automatic
+# Disaster Recovery mode
+# $Id: autodr,v 1.4 2007/11/13 14:38:14 gdha Exp $
+
+# check AUTODR flag - no AUTODR mode then exit silently
+[ -f /etc/recovery/AUTODR ] || exit 0
+
+# if CD is a rescue CD-ROM then exit silently
+ls /etc/recovery/ | grep Backup_made > /dev/null || exit 0
+
+. /etc/recovery/ansictrl.sh
+
+sleep 1
+clear
+sleep 2
+color white red
+print "\n\n\tAutomatic Disaster Recovery (AUTODR) Mode is active!\n\n\n\n\n"
+print "Press \"Enter\" key to interrupt AUTODR mode (within 20 seconds)...\n"
+pid=$$
+(>/tmp/WAIT; sleep 20; kill $pid >/dev/null 2>&1; rm -f /tmp/WAIT) &
+read answer
+rm -f /etc/recovery/AUTODR
+print "\n\tAUTODR mode is OFF.\n"
+exit 0

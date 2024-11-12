@@ -1,0 +1,23 @@
+Source: mkcdrec
+Section: admin
+Priority: extra
+Maintainer: Christian Werner <chw@ch-werner.de>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: mkcdrec
+Section: admin
+Priority: extra
+Architecture: i386
+Depends: ${shlibs:Depends}, ${misc:Depends}, ash, dialog, bc, syslinux, mkisofs
+Description: mkCDrec (make CD-ROM Recovery) disaster recovery tool-set
+ mkCDrec (Make CDROM Recovery) makes a bootable (El Torito) disaster recovery
+ image, including backups of the Linux system to one or more CD-ROM(s)
+ (multi-volume sets). Otherwise, the backups can be stored on another disk,
+ NFS disk, or (remote) tape. After a disk crash or system intrusion, the system
+ can be booted from the CD-ROM and one can restore the complete system as
+ it was. It also features disk cloning, which allows one to restore a disk
+ to another disk (the destination disk does not have to be of the same size,
+ as it calculates the partition layout itself). Currently, ext2, ext3, minix,
+ msdos, fat, vfat, reiserfs, xfs and jfs filesystems are supported.
+

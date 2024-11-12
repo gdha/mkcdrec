@@ -1,0 +1,67 @@
+#mount -o remount,rw /	# to be really sure / is rw
+# Some echo lines
+echo "To start the restore procedure do the following:"
+echo
+echo "cd /etc/recovery"
+echo "./start-restore.sh"
+echo
+echo "If you just wish to take a look at your archive then try something like:"
+echo
+echo "tar tzf /mnt/cdrom/discs_disc0_part2._.tar.gz"
+echo
+echo "If your archive is encrypted then try something like:"
+echo 
+echo -n "openssl "
+echo -n `cat /etc/recovery/EncryptedWith`
+echo -n " -in /mnt/cdrom/discs_disc0_part2._.tar.gz."
+echo -n `cat /etc/recovery/EncryptedWith`
+echo " -d | tar tzf -"
+echo
+echo "The syslog output is stored in /var/log/messages."
+
+# AUTODR stuff
+# AUTODR for rescue CDs makes no sense (unless external backup program has
+# been used such as TSM or DP)
+ls /etc/recovery/ | grep Backup_made > /dev/null || rm -f /etc/recovery/AUTODR
+if [ -f /etc/recovery/AUTODR ]; then
+   /usr/bin/autodr	# ask question for interruption
+   # if Enter has been pressed then the AUTODR mode is OFF
+   # file /etc/recovery/AUTODR is now removed by you
+   echo "....."
+   while true
+   do
+     sleep 1
+     # /tmp/WAIT is a lock file created by /usr/bin/autodr (wait max. 20s)
+     [ -f /tmp/WAIT ] || break
+   done
+   if [ -f /etc/recovery/AUTODR ]; then
+      echo "/etc/recovery/start-restore.sh will start over a few seconds!"
+      sleep 2
+      cd /etc/recovery ; ./start-restore.sh
+   fi
+fi
+echo
+echo "Switching to 2th virtual screen (Control-C does work there):"
+echo "Type command \"chvt 2\""
+
+# do a last check if media was mounted
+df -k | grep cdrom > /dev/null
+if [ $? -eq 1 ]; then
+   # media was not yet mounted (probably due to udev latency)
+   if [ -b /dev/ram2 ]; then
+        umount `head -n 1 /dev/ram2` 2>/dev/null
+        mount -t iso9660 -o ro `head -n 1 /dev/ram2` /mnt/cdrom || \
+	  mount -t vfat -o ro,shortname=winnt `head -n 1 /dev/ram2` /mnt/cdrom
+        rm -f /dev/cdrom
+        ln -s `head -n 1 /dev/ram2` /dev/cdrom
+   elif [ -b /dev/rd/2 ]; then
+        umount `head -n 1 /dev/rd/2` 2>/dev/null
+        mount -t iso9660 -o ro `head -n 1 /dev/rd/2` /mnt/cdrom || \
+	  mount -t vfat -o ro,shortname=winnt `head -n 1 /dev/rd/2` /mnt/cdrom
+        rm -f /dev/cdrom
+        ln -s `head -n 1 /dev/rd/2` /dev/cdrom
+   else
+        echo Can not find a RAM disk device at /dev/ram1 or /dev/rd/1!
+        echo I will not be able to automatically determine media.
+   fi
+fi # end of [ $? -eq 1 ]

@@ -1,0 +1,10 @@
+# Debian
+ETC_FILES="$ETC_FILES ssh/sshd_config ssh/ssh_config"
+
+# ssh-keygen is also needed, but it is included by Config.sh.
+
+BINARIES="$BINARIES sshd sftp-server"
+
+MAN_PAGES="$MAN_PAGES sshd"
+
+INITS="$INITS /etc/init.d/ssh"

@@ -1,0 +1,112 @@
+mknod -m 0620 /dev/tty1 c 4 1
+mknod -m 0620 /dev/tty2 c 4 2
+mknod -m 0620 /dev/tty3 c 4 3
+mknod -m 0620 /dev/tty4 c 4 4
+mknod -m 0620 /dev/tty5 c 4 5
+chown root.root /dev/tty*
+mkdir /dev/vc
+chmod 755 /dev/vc
+ln -s /dev/tty1 /dev/vc/1
+ln -s /dev/tty2 /dev/vc/2
+ln -s /dev/tty3 /dev/vc/3
+ln -s /dev/tty4 /dev/vc/4
+ln -s /dev/tty5 /dev/vc/5
+
+mknod -m 0660 /dev/sr0 b 11 0
+mknod -m 0660 /dev/sr1 b 11 1
+ln -s /dev/sr0 /dev/scd0
+ln -s /dev/sr1 /dev/scd1
+
+mknod -m 0660 /dev/sda b 8 0
+mknod -m 0660 /dev/sda1 b 8 1
+mknod -m 0660 /dev/sdb b 8 16
+mknod -m 0660 /dev/sdb1 b 8 17
+chown root.root /dev/sd*
+mknod -m 0660 /dev/hda b 3 0
+mknod -m 0660 /dev/hda1 b 3 1
+mknod -m 0660 /dev/hda2 b 3 2
+mknod -m 0660 /dev/hdb b 3 64
+mknod -m 0660 /dev/hdb1 b 3 65
+mknod -m 0660 /dev/hdb2 b 3 66
+mknod -m 0660 /dev/hdc b 22 0
+mknod -m 0660 /dev/hdc1 b 22 1
+mknod -m 0660 /dev/hdc2 b 22 2
+chown root.root /dev/hd*
+mkdir -p -m 0755 /dev/ida
+chown root.root /dev/ida
+mknod -m 0660 /dev/ida/c0d0 b 72 0
+mknod -m 0660 /dev/ida/c0d0p1 b 72 1
+mknod -m 0660 /dev/ida/c0d0p2 b 72 2
+chown root.root /dev/ida/c*
+mkdir -p -m 0755 /dev/cciss
+chown root.root /dev/cciss
+mknod -m 0660 /dev/cciss/c0d0 b 104 0
+mknod -m 0660 /dev/cciss/c0d0p1 b 104 1
+mknod -m 0660 /dev/cciss/c0d0p2 b 104 2
+chown root.root /dev/cciss/c*
+mkdir -p -m 0755 /dev/compaq
+chown root.root /dev/compaq
+mknod -m 0600 /dev/compaq/cpqphpc c 10 208
+chown root.root /dev/compaq/cpqphpc
+mknod -m 0600 /dev/compaq/cpqrid c 10 209
+chown root.root /dev/compaq/cpqrid
+mknod -m 0660 /dev/md0 b 9 0
+mknod -m 0660 /dev/md1 b 9 1
+mknod -m 0660 /dev/md2 b 9 2
+mknod -m 0600 /dev/mdspstat c 101 0
+mknod -m 0600 /dev/mdsp1 c 101 1
+mknod -m 0600 /dev/mdsp2 c 101 2
+mknod -m 0600 /dev/mdsp3 c 101 3
+chown root.root /dev/md*
+mknod -m 0660 /dev/ram0 b 1 0
+mknod -m 0660 /dev/ram1 b 1 1
+mknod -m 0660 /dev/ram2 b 1 2
+chown root.root /dev/ram*
+mknod -m 0644 /dev/random c 1 8
+chown root.root /dev/random
+mknod -m 0644 /dev/urandom c 1 9
+chown root.root /dev/urandom
+mknod -m 0660 /dev/sdcd b 69 16
+mknod -m 0660 /dev/sdcd1 b 69 17
+chown root.root /dev/sdcd*
+mknod -m 0660 /dev/ttyS0 c 4 64
+mknod -m 0660 /dev/ttyS1 c 4 65
+chown root.root /dev/ttyS*
+mknod -m 0666 /dev/ptyp0 c 2 0
+mknod -m 0666 /dev/ptyp1 c 2 1
+mknod -m 0666 /dev/ptyp2 c 2 2
+chown root.root /dev/ptyp*
+mkdir -p -m 0755 /dev/inet
+chown root.root /dev/inet
+mknod -m 0600 /dev/inet/ip c 30 32
+chown root.root /dev/inet/ip
+mknod -m 0600 /dev/inet/icmp c 30 33
+chown root.root /dev/inet/icmp
+mknod -m 0600 /dev/inet/ggp c 30 34
+chown root.root /dev/inet/ggp
+mknod -m 0600 /dev/inet/ipip c 30 35
+chown root.root /dev/inet/ipip
+mknod -m 0600 /dev/inet/tcp c 30 36
+chown root.root /dev/inet/tcp
+mknod -m 0600 /dev/inet/egp c 30 37
+chown root.root /dev/inet/egp
+mknod -m 0600 /dev/inet/pup c 30 38
+chown root.root /dev/inet/pup
+mknod -m 0600 /dev/inet/udp c 30 39
+chown root.root /dev/inet/udp
+mknod -m 0600 /dev/inet/idp c 30 40
+chown root.root /dev/inet/idp
+mknod -m 0600 /dev/inet/rawip c 30 41
+chown root.root /dev/inet/rawip
+ln -s inet/arp udp
+ln -s inet/rip udp
+mknod -m 0660 /dev/st0 c 9 0
+mknod -m 0660 /dev/st1 c 9 1
+mknod -m 0660 /dev/nst0 c 9 128
+mknod -m 0660 /dev/nst1 c 9 129
+chown root.root /dev/st*
+chown root.root /dev/nst*
+mknod -m 0600 /dev/console c 5 1
+chown root.root /dev/console
+mknod -m 0666 /dev/null c 1 3
+chown root.root /dev/null

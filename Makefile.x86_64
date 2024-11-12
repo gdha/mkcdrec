@@ -1,0 +1,159 @@
+# Copyright (c) 2000-2009 Gratien D'haese
+# Please read LICENSE in the source directory
+#
+VPATH=.:isofs:./bin
+
+# local dirs
+MKCDREC_DIR := $(shell pwd)
+SCRIPTS=$(MKCDREC_DIR)/scripts
+BIN_DIR=$(MKCDREC_DIR)/bin
+UTILITIES=utilities
+
+# some packages used by mkCDrec (may be replaced by higher versions)
+BUSYBOX_DIR := $(shell ls -d busybox* 2>/dev/null)
+CUTSTREAM_DIR := $(shell ls -d cutstream* 2>/dev/null)
+PASTESTREAM_DIR := $(shell ls -d pastestream* 2>/dev/null)
+
+#
+DATE := $(shell date +%d.%m.%Y)
+ISOFS_DIR := $(shell if grep -q ISOFS_DIR= /etc/mkcdrec.conf 2>/dev/null; then \
+ grep ISOFS_DIR= /etc/mkcdrec.conf | grep -v ^\# | cut -d= -f 2; \
+else \
+ grep ISOFS_DIR= Config.sh | grep -v ^\# | cut -d= -f 2; \
+fi)
+VERSION := $(shell cat VERSION | cut -d_ -f2)
+CDREC_ISO_DIR := $(shell if grep -q CDREC_ISO_DIR= /etc/mkcdrec.conf 2>/dev/null; then \
+ grep CDREC_ISO_DIR= /etc/mkcdrec.conf |grep -v ^\#|cut -d= -f2; \
+else \
+ grep CDREC_ISO_DIR= Config.sh |grep -v ^\#|cut -d= -f2; \
+fi)
+
+all: devs dirs mkmakeISO9660 rd-base.img.bz2 boot.img Backup_Finished
+	@echo ; echo Done.
+
+rescue: devs dirs mkmakeISO9660 rd-base_rescue boot.img Backup_Finished
+	@echo ; echo Done.
+
+superrescue: devs dirs mkmakeISO9660 rd-base_superrescue boot.img Backup_Finished
+	@echo ; echo Done.
+
+CD-ROM: devs dirs mkmakeISO9660 rd-base_CD-ROM boot.img Backup_Finished
+	@echo ; echo Done.
+
+path: devs dirs mkmakeISO9660 rd-base_path boot.img Backup_Finished
+	@echo ; echo Done.
+
+device: devs dirs mkmakeISO9660 rd-base_device boot.img Backup_Finished
+	@echo ; echo Done.
+
+OBDR: devs dirs mkmakeISO9660 rd-base_OBDR boot.img Backup_Finished
+	@echo ; echo Done.
+
+USB-KEY: devs dirs mkmakeISO9660 rd-base_USB-KEY boot.img Backup_Finished
+	@echo ; echo Done.
+
+mkmakeISO9660: $(SCRIPTS)/makeISO9660.in
+	$(SCRIPTS)/mkmakeISO9660.sh
+
+CDrec.iso: rd-base.img.bz2 boot.img Backup_Finished
+	 mkisofs -J -r -P "$(VERSION)" -V "CDrec-$(DATE)" -o $(CDREC_ISO_DIR)/$@ -b boot.img isofs/
+
+rd-base.img.bz2: $(SCRIPTS)/rd-base.sh
+	$(SCRIPTS)/rd-base.sh
+
+rd-base_rescue: 
+	$(SCRIPTS)/rd-base.sh -m rescue
+
+rd-base_superrescue: 
+	$(SCRIPTS)/rd-base.sh -m superrescue
+
+rd-base_CD-ROM: 
+	$(SCRIPTS)/rd-base.sh -m CD-ROM
+
+rd-base_path:
+	$(SCRIPTS)/rd-base.sh -m path -a $(DESTINATION_PATH)
+
+rd-base_device:
+	$(SCRIPTS)/rd-base.sh -m device
+
+rd-base_OBDR:
+	$(SCRIPTS)/rd-base.sh -m OBDR
+
+rd-base_USB-KEY:
+	$(SCRIPTS)/rd-base.sh -m USB-KEY -a $(DEV)
+
+boot.img: $(SCRIPTS)/bootx86_64.sh initrd.img.gz 
+	$(SCRIPTS)/bootx86_64.sh
+
+initrd.img.gz: $(SCRIPTS)/initrd.sh linuxrc
+	$(SCRIPTS)/initrd.sh
+
+dirs:
+	mkdir -p $(ISOFS_DIR) stage tmp
+
+devs: /dev/initrd
+	@echo Device check OK
+
+/dev/initrd:
+	if [ ! -c /dev/.devfsd ]; then \
+		mknod /dev/initrd b 1 250; \
+		chmod 400 /dev/initrd; \
+	fi
+
+Backup_Finished:
+	$(SCRIPTS)/tar-it.sh
+
+clean:
+	-umount stage
+	rm -f *.img
+	rm -f initrd.img.gz
+	rm -rf $(ISOFS_DIR)
+	rm -rf tmp
+	rm -f isofs
+	rm -rf bootflop
+	rm -f *.log *.log.old
+	rm -f $(CDREC_ISO_DIR)/CDrec.iso
+
+build:
+	cp -f .config.bb $(BUSYBOX_DIR)/.config
+	(cd $(BUSYBOX_DIR); make silentoldconfig; make install)
+	(cd $(CUTSTREAM_DIR); make)
+	(cd $(PASTESTREAM_DIR); make)
+	(cd mediacheck; make)
+
+distclean: clean
+	(cd $(BUSYBOX_DIR); make distclean; cp -f ../.config.bb ./.config)
+	(cd $(CUTSTREAM_DIR); make clean)
+	(cd $(PASTESTREAM_DIR); make clean)
+	(cd mediacheck; make clean)
+	(find $(MKCDREC_DIR) -name ".#*" -exec rm -f {} \;)
+	(find $(MKCDREC_DIR) -name "*~" -exec rm -f {} \;)
+
+dist: distclean
+	(cd ..; tar --file mkcdrec-$(VERSION).tar.gz --create --gzip --verbose --owner=root --group=root --exclude CDrec* --exclude stage --exclude tmp --exclude isofs --exclude OLD --exclude utilities --exclude .cvsignore --exclude CVS mkcdrec )
+
+cvsclean: distclean
+	-rm -rf isofs stage tmp
+	-rm -f bin/cutstream bin/sfdisk bin/mformat
+	-rm -f mkcdrec.log* .#* scripts/makeISO9660.sh scripts/.#*
+	-rm -f scripts/Config.sh bin/checkisomd5 bin/implantisomd5
+	(cd scripts; ln -s ../Config.sh ./Config.sh)
+	-rm -f packaging/z
+	
+utils:
+	(tar --create --gzip --verbose --owner=root --group=root --file ../mkcdrec-$(VERSION)_utils.tar.gz $(UTILITIES) )
+
+test: $(SCRIPTS)/test.sh
+	$(SCRIPTS)/test.sh
+
+help:
+	@echo "Usage of mkCDrec make command:"
+	@echo "make		Interactive process"
+	@echo "make CD-ROM	Make rescue+backups on CD-ROM"
+	@echo "make rescue	Make rescue CD-ROM only"
+	@echo "make device	Make rescue CD-ROM and backups on (remote) tape"
+	@echo "make path DESTINATION_PATH=/foo	Make rescue CD-ROM and backups on /foo"
+	@echo "make USB-KEY DEV=/dev/sda1	Make rescue+backups on USB KEY on /dev/sda1"
+	@echo "make OBDR	Make rescue CD-ROM and backups on a bootable tape"
+	@echo "make clean	Remove all temporary files, including /tmp/*.iso"
+	@echo "make install	Install /usr/sbin/mkcdrec script"

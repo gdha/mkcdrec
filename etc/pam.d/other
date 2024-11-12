@@ -1,0 +1,4 @@
+auth       optional     /lib/security/pam_permit.so
+account    optional     /lib/security/pam_permit.so
+password   optional     /lib/security/pam_permit.so
+session    optional     /lib/security/pam_permit.so

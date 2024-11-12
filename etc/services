@@ -1,0 +1,164 @@
+# /etc/services:
+#
+# Network services, Internet style
+#
+# service-name  port/protocol  [aliases ...]   [# comment]
+
+tcpmux		1/tcp				# TCP port service multiplexer
+tcpmux		1/udp				# TCP port service multiplexer
+rje		5/tcp				# Remote Job Entry
+rje		5/udp				# Remote Job Entry
+echo		7/tcp
+echo		7/udp
+discard		9/tcp		sink null
+discard		9/udp		sink null
+systat		11/tcp		users
+systat		11/udp		users
+daytime		13/tcp
+daytime		13/udp
+qotd		17/tcp		quote
+qotd		17/udp		quote
+msp		18/tcp				# message send protocol
+msp		18/udp				# message send protocol
+chargen		19/tcp		ttytst source
+chargen		19/udp		ttytst source
+ftp-data	20/tcp
+ftp-data	20/udp
+# 21 is registered to ftp, but also used by fsp
+ftp		21/tcp
+ftp		21/udp		fsp fspd
+ssh		22/tcp				# SSH Remote Login Protocol
+ssh		22/udp				# SSH Remote Login Protocol
+telnet		23/tcp
+telnet		23/udp
+# 24 - private mail system
+smtp		25/tcp		mail
+smtp		25/udp		mail
+time		37/tcp		timserver
+time		37/udp		timserver
+rlp		39/tcp		resource	# resource location
+rlp		39/udp		resource	# resource location
+nameserver	42/tcp		name		# IEN 116
+nameserver	42/udp		name		# IEN 116
+nicname		43/tcp		whois
+nicname		43/udp		whois
+tacacs		49/tcp				# Login Host Protocol (TACACS)
+tacacs		49/udp				# Login Host Protocol (TACACS)
+re-mail-ck	50/tcp				# Remote Mail Checking Protocol
+re-mail-ck	50/udp				# Remote Mail Checking Protocol
+domain		53/tcp				# name-domain server
+domain		53/udp
+whois++		63/tcp
+whois++		63/udp
+bootps		67/tcp				# BOOTP server
+bootps		67/udp
+bootpc		68/tcp				# BOOTP client
+bootpc		68/udp
+tftp		69/tcp
+tftp		69/udp
+finger		79/tcp
+finger		79/udp
+http		80/tcp		www www-http	# WorldWideWeb HTTP
+http		80/udp		www www-http	# HyperText Transfer Protocol
+kerberos	88/tcp		kerberos5 krb5	# Kerberos v5
+kerberos	88/udp		kerberos5 krb5	# Kerberos v5
+hostname	101/tcp		hostnames	# usually from sri-nic
+hostname	101/udp		hostnames	# usually from sri-nic
+sunrpc		111/tcp		portmapper	# RPC 4.0 portmapper TCP
+sunrpc		111/udp		portmapper	# RPC 4.0 portmapper UDP
+auth		113/tcp		authentication tap ident
+auth		113/udp		authentication tap ident
+sftp		115/tcp
+sftp		115/udp
+ntp		123/tcp
+ntp		123/udp				# Network Time Protocol
+netbios-ns	137/tcp				# NETBIOS Name Service
+netbios-ns	137/udp
+netbios-dgm	138/tcp				# NETBIOS Datagram Service
+netbios-dgm	138/udp
+netbios-ssn	139/tcp				# NETBIOS session service
+netbios-ssn	139/udp
+imap		143/tcp		imap2		# Interim Mail Access Proto v2
+imap		143/udp		imap2
+snmp		161/tcp				# Simple Net Mgmt Proto
+snmp		161/udp				# Simple Net Mgmt Proto
+snmptrap	162/udp		snmp-trap	# Traps for SNMP
+cmip-man	163/tcp				# ISO mgmt over IP (CMOT)
+cmip-man	163/udp
+cmip-agent	164/tcp
+cmip-agent	164/udp
+mailq		174/tcp				# MAILQ
+mailq		174/udp				# MAILQ
+xdmcp		177/tcp				# X Display Mgr. Control Proto
+xdmcp		177/udp
+nextstep	178/tcp		NeXTStep NextStep	# NeXTStep window
+nextstep	178/udp		NeXTStep NextStep	# server
+bgp		179/tcp				# Border Gateway Proto.
+bgp		179/udp
+link		245/tcp		ttylink
+link		245/ucp		ttylink
+https		443/tcp				# MCom
+https		443/udp				# MCom
+microsoft-ds	445/tcp
+microsoft-ds	445/udp
+kpasswd		464/tcp		kpwd		# Kerberos "passwd"
+kpasswd		464/udp		kpwd		# Kerberos "passwd"
+dhcpv6-client	546/tcp
+dhcpv6-client	546/udp
+dhcpv6-server	547/tcp
+dhcpv6-server	547/udp
+whoami		565/tcp
+whoami		565/udp
+ipp		631/tcp				# Internet Printing Protocol
+ipp		631/ucp				# Internet Printing Protocol
+kerberos-adm	749/tcp				# Kerberos `kadmin' (v5)
+kerberos-iv	750/udp		kerberos4 kerberos-sec kdc
+kerberos-iv	750/tcp		kerberos4 kerberos-sec kdc
+rsync		873/tcp				# rsync
+rsync		873/udp				# rsync
+telnets		992/tcp
+telnets		992/udp
+
+#
+# UNIX specific services
+#
+exec		512/tcp
+biff		512/udp		comsat
+login		513/tcp
+who		513/udp		whod
+shell		514/tcp		cmd		# no passwords used
+syslog		514/udp
+printer		515/tcp		spooler		# line printer spooler
+printer		515/udp		spooler		# line printer spooler
+talk		517/udp
+ntalk		518/udp
+utime		519/tcp		unixtime
+utime		519/udp		unixtime
+efs		520/tcp
+router		520/udp		route routed	# RIP
+ripng		521/tcp
+ripng		521/udp
+timed		525/tcp		timeserver
+timed		525/udp		timeserver
+tempo		526/tcp		newdate
+courier		530/tcp		rpc
+conference	531/tcp		chat
+netnews		532/tcp
+netwall		533/udp				# -for emergency broadcasts
+uucp		540/tcp		uucpd		# uucp daemon
+klogin		543/tcp				# Kerberized `rlogin' (v5)
+kshell		544/tcp		krcmd		# Kerberized `rsh' (v5)
+afpovertcp	548/tcp				# AFP over TCP
+afpovertcp	548/udp				# AFP over TCP
+remotefs	556/tcp		rfs_server rfs	# Brunhoff remote filesystem
+socks		1080/tcp			# socks proxy server
+socks		1080/udp			# socks proxy server
+ica		1494/tcp			# Citrix ICA Client
+ica		1494/udp			# Citrix ICA Client
+wins		1512/tcp			# Microsoft's Windows Internet Name Service
+wins		1512/udp			# Microsoft's Windows Internet Name Service
+l2tp		1701/tcp	l2f
+l2tp		1701/udp	l2f
+nfs		2049/tcp	nfsd
+nfs		2049/udp	nfsd
+omni		5555/tcp			# Data Protector

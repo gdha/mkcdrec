@@ -1,0 +1,8 @@
+PATH=/sbin:/bin:/usr/bin:/usr/sbin
+[ "${BASH+bash}" = bash ] && enable kill
+halt -w
+echo "Unmounting file systems"
+umount -a
+mount -n -o remount,ro /
+echo -n "Rebooting..."
+/sbin/reboot -d -f -i

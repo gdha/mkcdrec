@@ -1,0 +1,236 @@
+.\" Process this file with groff -man -Tascii mkcdrec.8
+.TH "mkcdrec" "8" "Make CD-ROM Recovery" "Gratien Dhaese" "Disaster Recovery"
+.SH "NAME"
+mkcdrec \- Make CD\-ROM Recovery tool
+.SH "SYNOPSIS"
+.B mkcdrec [OPTION]
+.SH "DESCRIPTION"
+Make CD\-ROM Recovery (mkCDrec) is a disaster recovery based tool, currently for Intel GNU/Linux based systems only. It is capable of making a bootable El\-Torito ISO9660 image based on your current Linux system, including the running GNU/Linux kernel. These ISO9660 images can also be burned to one or more CD\-R(W)(s) or DVD+R(W) automatically by mkCDrec.
+.LP 
+mkCDrec can be started in several ways. The user can use menu\-driven (pure interactive) approach or pass the option along with the command line.
+.LP 
+Please note that mkCDrec needs a burned ISO9660 image CD\-ROM to boot from. Although backups can be stored on local or remote devices (disk, tape) too.
+.LP 
+There is one exception where no physical CD\-ROM will be created! And that is the so\-called One\-Button Disaster Recovery (OBDR) where a tape drive will emulate a bootable CD\-ROM. mkCDrec is capable of creating such a OBDR tape.
+.SH "OPTIONS"
+.IP "<no options>"
+without additional parameters shows an one\-liner to use mkcdrec command with an option or use option \-h for additional help.
+.IP "\-h or help"
+lists the available options
+.IP "menu"
+gives the menu\-driven approach where the user will be prompted what he/she  wishes to accomplish.
+.IP "rescue"
+produces a bootable El\-Torito ISO9660 image which can be used for rescue purposes once burned to a CD\-R (or CD\-RW).
+.IP "CD\-ROM"
+produces a bootable El\-Torito ISO9660 image including the backups all on one or more CD\-R(W)(s).
+.IP "device"
+produces a bootable El\-Torito ISO9660 image including the backups using a (remote) tape device.
+.IP "path DESTINATION_PATH=/foo"
+produces a bootable El\-Torito ISO9660 image including the backups on a local or remote (NFS/SMB) filesystem /foo.
+.IP "clean"
+removes old images in /tmp (ending with .iso) and cleans up old backups too. It is always wise to do a clean action before starting a new backup session.
+.IP "test"
+Does a best effort test whether to see if your system has all the required tools on board to make successfully a mkCDrec CD\-ROM.
+.IP "superrescue"
+produces a bootable El\-Torito ISO9660 image which can be used for rescue purposes once burned to a CD\-R (or CD\-RW), but the big difference between the rescue option and superrescue is that superrescue contains the whole system's bin/lib directories.
+.IP "OBDR"
+to create a bootable ISO image including archives on a single tape.
+.IP "install"
+to install a small script (/usr/sbin/mkcdrec) to replace the previous mkcdrec (or make) command.
+.SH "CONFIGURATION"
+Edit the Config.sh file to fine\-tune your setup. The easiest way to start is by running the "mkcdrec test" (or "make test") command which gives advise to tune the Config.sh file.
+.br 
+It is also possible to copy the Config.sh file to /etc/mkcdrec.conf. The /etc/mkcdrec.conf file is always the last file that is read and therefore overwrites previous settings.
+.br 
+Note: the /etc/mkcdrec.conf is not installed by a standard mkcdrec installation (nor via a RPM installation, nor via the tar\-ball installation). It is hand\-copied by you alone!
+.br 
+What follows is a brief overview of variables defined in the Config.sh (or mkcdrec.conf) file:
+.IP BOOTARCH
+Use "x86" for Intel IA32 processor type (default), or "x86_64" for AMD64 and Xeon processors, or "ia64" for Itanium processors, or "powermac" for PPC MacIntosh and "sparc" for Sparc processors.
+.IP HEAVY_VERIFY
+If "y" then the RAM disk image will be checked in\-depth.
+.IP RAMDISK_SIZE
+Is the amount of RAM size which will be used for our RAMdisk (64 MB by default).
+.IP ISOFS_DIR
+Is the location where all bootable information, documentation and archives will be stored to make an ISO9660 image from it. By doing a "mkcdrec clean" (or "make clean") the ISOFS_DIR directory will be wiped out. Therefore, make sure it is a temporary directory.
+.IP CDREC_ISO_DIR
+Is the location where the ISO9660 image will be stored. By running "mkcdrec clean" or "make clean" all images in this directory are removed!
+.IP LINUX_KERNEL
+This variable can be left empty, but in some circumstances mkCDrec does not always use the correct kernel. In these cases fill in the absolute path to your Linux kernel.
+.IP KERNEL_APPEND
+Fill in any additional kernel parameters if needed, e.g. for Mandrake usually " devfs=mount" is needed when using DevFS.
+.IP CMP_PROG
+Compression program used to shrink the archives. By default gzip is selected, but users could favour for bzip2, lzop, or even compress.
+.IP CMP_PROG_OPT
+The option for above CMP_PROG. These are set to "\-9cv" for gzip as compression tool. If you use another compression tool please check these options carefully!
+.IP CIPHER
+There is a possibility to encrypt your archives with openssl and with this variable you choose the encryption cypher. Use the "openssl \-enc" command to get an overview of the available ciphers. Be aware, when you want to use mkCDrec in batch mode you have to create a file $HOME/.secret containing your secret phrase. Do not forget to chmod 600 $HOME/.secret!!
+Default is not to use encryption (none).
+.IP PreExec
+Commands to be executed before beginning with the archivation of your filesystems. Typically, to shut down a database, but it can be anything.
+.br 
+Typically this is a small shell script which does the requested actions.
+.IP PostExec
+Commands to be executed after mkCDrec has done with the archivation, e.g.to start up the database again.
+.IP PROMPT_BOOT_FLOPPY
+A simple variable (0 or 1) indicating if you want to have a physically boot floppy made. Useful for those systems which cannot boot from CD\-ROM. By default 0, or no boot floppy made.
+.IP INITRD_FS
+What kind of filesystem the initial RAMdisk has to be. Various options are possible, such as ext2, minix, romfs or cramfs. By default ext2 is used. Be aware, that the type of filesystem used for the inital RAM disk has nothing to do with the filesystems on your Linux system. It is only used when mkCDrec boots from its CD\-ROM.
+.IP ROOT_FS
+Filesystem type used by the bigger (second stage) RAM disk. The choices here are typically ext2, ext3 and minix. No journaled filesystem can be used in a RAMdisk of 32 MB! Anyhow, in RAM jounaled filesystems have not much added value. By default ext2 is selected.
+.IP DEVFS
+Does your kernel supports devFS or not. Make test will tell you, just apply the suggestion.
+.IP BACKUP_LOOP
+This variable gives the user a choice if he want to backup loopback devices or not. By default the value is 0 (no backup of loopback devices).
+.IP BOOT_FLOPPY_DENSITY
+This defines the size of the emulating bootfloppy. There are three possibilities, HD for 1.44 Mb, H1722 for 1.722 Mb and ED for 2.88 Mb in size. When the PROMPT_BOOT_FLOPPY=1 then a physically floppy will be created, but only when the density is less then 2.88 Mb. MkCDrec will verify this and adjust this automatically according to the real disk space requirements of the boot floppy.
+.IP CHECK_BAD_BLOCKS
+Option is set by default to "\-c" which will cause of restore time that all disk drive will be scanned for bad blocks during the mkfs phase. If the option is set to "" then this will increase the mkfs process, but no check will be done for bad blocks then (this is ok when testing mkcdrec, but not advised for production environments).
+.IP TAPE_DEV
+If you want to store the archives on tape please fill in a no\-rewinding tape devices here. The variable will only be checked and used when you select "make device" or via mkCDrec menu option 4 "Enter (remote) tape device".
+.IP MT
+Use the "/bin/mt" command of st\-mt package (only needed in combination with tape backups).
+.IP TapeDensity
+Currently mkCDrec has no clue what kind of tape you are using to store backups on. Therefore, this variable is used to hardcode the tape density in use. Use the "mt densities" command to get on overview of the different possibilities. mkcdrec will not do any attempt to guess the density (if you know how please come foreward and tell us).
+.IP REMOTE_COMMAND
+There are two possible choices here (rsh and ssh). This is used in combination with remote tapes, but could be extended to remote user login for copying in a secure way the ISO9660 images.
+.IP EXCLUDE_LIST
+Contains a list of directories which will be excluded from the backups.
+.br 
+"/test" will exclude all items in /test (if /test is a directory) and also /test will NOT exist upon restore
+.br 
+"/test/*" will exclude all items in the directory /test but /test will be created upon restore
+.br 
+"/var/log/maillog*" will exlude all /var/log/maillog* files
+.IP INITRD_MODULES
+List of modules we want to include in the initial ram disk. Mkcdrec will do a best effort to list all the needed modules to mount the CD\-ROM at boot time, but it can miss some. Here we summarize an initial list of modules where you may add or remove modules. The default list is:
+.br 
+"cpqarray ide\-mod ide\-probe\-mod ide\-cd ide\-generic ide\-core cdrom isofs ide\-scsi sr\-mod ide\-disk"
+.IP SCSI_MODULES
+List of kernel modules which must be included on the ram disk. Be aware that 'lsmod' is being used to build the list of modules, but this one is rather for those which cannot be seen at make time, e.g. laptop with SCSI card not in slot.
+.IP NETWORK_MODULES
+List of any network modules needed which cannot be detected (default 3c59x)
+.IP USB_MODULES
+List of need USB modules needed for e.g. keyboard, USB CD\-ROM.
+.IP OTHER_MODULES
+Any other module which may be useful. May be empty.
+.IP MKDIR_LIST
+List of direcories which have to be made when ram disk is being filles with files. Normally it should be OK to leave as it is.
+.IP ETC_FILES
+List of files which have to be copied to the ramdisks /etc directory
+.IP BINARIES
+List all executables of /bin, /usr/bin or /sbin which have to copied to the ramdisk. Executables which are already included with BusyBox are skipped.
+.IP LINKS
+List of symbolic links to be made on the ramdisk.
+.IP FORCE_SYSLINUX
+Force syslinux forces mkcdrec to use boot floppy emulation while booting from CD\-ROM. By default this setting is false which means isolinux will be used to boot from CD\-ROM. By using isolinux we overcome the 2.88 Mb limit of boot floppy emulation. Keep this variable setting to "false" unless you know what you are doing.
+.IP BURNCDR
+After making an ISO9660 image burn immediately a CDR (default is no).
+.IP CDRECORD
+cdrecord program to burn CDR, or dvdrecord to burn DVD\-RW
+.IP SCSIDEVICE
+SCSI address of CD\-writer \- use "cdrecord \-scanbus" to fill in the desired numbers. Default is "0,4,0"
+.br 
+Run "mkcdrec test" or "make test" to guess the value.
+.IP WRITERSPEED
+The CD\-writer speed (default 2).
+.IP BLANK_CDRW
+"y" to automatically blank the CD\-RW
+.IP CD_EJECT
+To automatically eject the CD after burning
+.IP MAXCDSIZE
+The capacity of the CDR (default 670000 Kb).
+.IP CDRECORDOPT
+Any options you need for cdrecord (default empty)
+.IP DEVFS
+Device Filesystem (do for /dev what proc does for /proc). Default is 0.
+.br 
+Warning: CONFIG_DEVFS_FS=y and CONFIG_DEVFS_MOUNT=y is needed in Linux .config file (recompile if needed).
+.br 
+Run "mkcdrec test" or "make test" and it will tell you it is correct or not.
+.IP MAN_PAGES
+list of man pages to include on rescue CD\-ROM
+.IP MKISOFS
+If you change it use abolute path to mkisofs (default mkisofs)
+.IP KERNEL_APPEND
+if you need to add some additional parameters at boot time, e.g. vga=794 or devfs=mount (sometimes needed with Mandrake). Default is empty.
+.IP MKCDREC_MODULES
+add additional startup modules, e.g. rh_pppoe sshd
+.IP FIXED_SIZE
+Only usefull for cloning! List of partition which have to stay fixed in size, e.g. /dev/hda1. Note: FAT partitions do not have to be listed.
+.IP SERIAL
+Serial console, e.g. ttyS0 (default empty)
+.IP BAUDRATE
+Speed (default 9600) of serial console
+.IP FORCE_DHCP_SUPPORT
+Say "Y" to always force DHCP from mkCDrec (default=N).br For PXE booting make sure this variable is set to "N".
+.IP DVD_Drive
+Use a DVD\-writer: 0 for no, 1 for yes (default 0). When using dvdrecord make sure this is set to 0.
+.br 
+Set to 1 for growisofs usage, leave it 0 for cdrecord with dvd support (e.g. dvdrecord) but do not forget to change MAXCDSIZE too then.
+.br 
+It is important to know that growisofs writes directly to the DVD and does not produce an ISO image! Another important issue to know is that with growisofs only one DVD can be written (no multiply DVDs).
+.IP TSM_RESTORE
+If the backups are stored with the help of Tivoli Storage Manager then say "y", otherwise use "n" (default).
+.br 
+If this variable is set to "y" a script called "tsm\-restore.sh" is copied to the /etc/recovery directory (only available during recovery). Use tsm\-restore.sh instead of start\-restore.sh to recover your system via Tivoli Storage Manager.
+.IP TSM_ROOT_DIR
+Is by default fixed to "/opt/tivoli/tsm/client/ba/bin".
+.IP TSM_FILES
+List of TSM files needed for the restore.
+.IP DP_RESTORE
+If the backups were made by HP Openview Storage Data Protector (or Omniback) then set this variable to "y" (default is "n"). If variable is set to "y" a script called dp\-restore.sh will be copied to /etc/recovery. Use dp\-restore.sh to recover your system (instead of using start\-restore.sh) with Data Protector.
+.IP DP_ROOT_DIR
+The root directory of Data Protector is most likely /usr/omni (no need to change).
+.IP DP_FILES
+List of executables we need at recovery time for Data Protector.
+.IP DP_DATALIST_NAME
+Name of the backup datalist of this system.
+.IP AUTODR
+Set AUTODR to "y" if you want to activate Automatic Disaster Recovery (AUTODR) after booting up with a mkCDrec CD\-ROM. If set to "y" then mkCDrec will lauch the recover process automatically (default is "n").
+.IP Disable_SELinux_during_backup
+SELinux enforcing mode make tar cripple because tar does not support the extended attributes that store the security context labels. See http://fedora.redhat.com/docs/selinux\-faq\-fc3/ \- back up files
+.br 
+Mkcdrec can however do a best effort by temporary disabling SELinux during the backup only \- if you can live with that set the variable to "true" (default is "false").
+.SH "REPORTING BUGS"
+To submit bugs use the mkCDrec Sourceforge bug section:
+.br 
+http://sourceforge.net/tracker/?func=add&group_id=25327&atid=383782
+.br 
+Please login with a valid SourceForge account before submitting bug reports. Furthermore, add sufficient background information to the call such as:
+.br 
+Distribution, operating system, kernel version, log files, Config.sh, mkcdrec.log and so on. The more information we have the quicker a solution will be found.
+.SH "AUTHORS"
+Mkcdrec is mainly developed by Gratien D'haese and heavily sponsored by IT3 Consultants (URL: http://www.it3.be)
+.br 
+See also the URL http://mkcdrec.ota.be/credits.html for all the people who deserve credits!
+.SH "SUPPORT"
+Support to mkcdrec comes in several manners, such as via
+.LP 
+SourceForge
+.br 
+http://sourceforge.net/tracker/?func=add&group_id=25327
+.LP 
+Mailing List
+.br 
+send an e\-mail to "mkcdrec\-users@lists.sourceforge.net", or
+.br 
+check the mail archives at
+.br 
+http://sourceforge.net/mailarchive/forum.php?forum_id=7749
+.LP 
+Discussion forum
+.br 
+http://sourceforge.net/forum/forum.php?forum_id=79634
+.LP 
+E\-Mail (premium level)
+.br 
+If you want direct contact with the authors for urgent matters we ask you to make a small donation via PayPal. For details see:
+.br 
+http://mkcdrec.ota.be/project/support.html#E\-mail%20Support
+.LP 
+Professional Support
+.br 
+Contact IT3 Consultants for more information on professional support or on how to become a support channel: http://www.it3.be/mkcdrec.html
+.SH "See Also"
+The home page of mkCDrec \fBhttp://mkcdrec.ota.be/\fR

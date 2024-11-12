@@ -1,0 +1,14 @@
+modprobe -q usbcore
+modprobe -q hid
+modprobe -q usbserial
+modprobe -q usbhid
+modprobe -q ehci-hcd
+modprobe -q uhci-hcd
+modprobe -q usb-ohci
+modprobe -q usb-uhci
+modprobe -q ohci-hcd
+modprobe -q usb-storage
+modprobe -q keybdev
+modprobe -q mousedev
+modprobe -q usbhid
+lsmod 

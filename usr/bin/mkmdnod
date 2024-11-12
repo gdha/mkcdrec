@@ -1,0 +1,13 @@
+# Script to recreate the /dev/mapper/control file
+cat /proc/misc | grep device-mapper >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+   echo "The kernel does not support the \"device-mapper\" device."
+   echo "Graceful exit."
+   exit 0
+fi
+minor_nr=`cat /proc/misc | grep device-mapper | awk '{print $1}'`
+[ ! -d /dev/mapper ] && mkdir /dev/mapper
+[ ! -c /dev/mapper/control ] && mknod /dev/mapper/control c 10 $minor_nr
+modprobe -q dm_mod
+echo "device-mapper character device exists:"
+ls -l /dev/mapper/control | tail -n 1

@@ -1,0 +1,5 @@
+mount -o remount,rw /
+cat > /proc/sys/kernel/ctrl-alt-del <<EOF
+1
+EOF
+echo "Now press Ctrl-Alt-Del keys to reboot"

@@ -1,0 +1,201 @@
+#!/bin/sh
+# check if /dev/null exists:
+[ ! -c /dev/null ] && mknod -m 0666 /dev/null c 1 3
+# If we're using devfs, start devfsd now - we need the old device names
+[ -e /dev/.devfsd -a -x /sbin/devfsd ] && /sbin/devfsd /dev
+# If we're using devfs, unmount pre-pivot_root /dev.
+[ -e /dev/.devfsd ] && umount /initrd/dev 2>/dev/null
+# check if old initrd/mnt (cdrom) is still mounted
+[ -d /initrd/mnt ] && umount /initrd/mnt 2>/dev/null
+[ -x /sbin/blockdev ] && /sbin/blockdev --flushbufs /dev/ram0 >/dev/null 2>&1
+[ -f /proc/mounts ] || mount -t proc proc /proc
+[ -d  /sys ] && mount -n -t sysfs /sys /sys >/dev/null 2>&1
+mount -n /dev/pts >/dev/null 2>&1
+
+[ -f /etc/recovery/modprobe.sh ] && /etc/recovery/modprobe.sh
+
+echo Remounting root read-write
+#mount -o remount,rw / || mount -n -o remount,rw /   # add -n to avoid writing in /etc/mtab file
+mount -o remount,rw /  &	# & because of segmentation fault with remount opt
+##mount -a || mount -a -n # /etc/mtab will be created and is supported by BB
+
+# set the default LANG
+LANG=C ; export LANG
+
+if which loadkeys; then
+        echo "Setting keyboard layout"
+        gzip -dc /etc/recovery/kbd.map.gz | loadkeys
+fi
+
+# for SuSE 10.1, root-dir has to be writeable before starting udev (denecke@fh-muenster.de)
+if [ -f /etc/init.d/boot.udev ]; then
+   /etc/init.d/boot.udev start
+   echo "Wait a few seconds to ensure all devices are activated and ready..."
+   sleep 5
+fi
+
+# Newer releases use udev, root-dir has to be writeable before starting udev (denecke@fh-muenster.de)
+START_UDEV=""
+# Debian 4.0 has /etc/init.d/udev script
+if [ -x /etc/init.d/udev ]; then
+	START_UDEV="/etc/init.d/udev start"
+fi
+if [ -x /sbin/start_udev ]; then
+        START_UDEV="/sbin/start_udev"
+fi
+if [ -x /sbin/udevstart ]; then
+        START_UDEV="/sbin/udevstart"
+fi
+if [ ! -z "${START_UDEV}" ]; then
+  pernetrules=`ls /etc/udev/rules.d/*persistent-net.rules 2>/dev/null`
+  if [ -f "$pernetrules" ]; then
+    ans=n
+    if which dialog ; then
+      dialog 2>/dev/null --timeout 30 --defaultno \
+        --yesno "Clear udev network interface associations ?" 8 40
+      if [ $? -eq 0 ]; then
+         ans=y
+      fi
+    else
+      echo -n -e "\n\n\n\a\aClear udev network interface associations ? [n] "
+      read -t 30 ans
+    fi
+    case "$ans" in
+      [Yy]*)
+        rm -f "$pernetrules"
+	touch /tmp/new-per-net-rules
+	;;
+     esac
+  fi
+  echo -e "\n\n"
+  ${START_UDEV}
+  if [ ! -c /dev/console ]; then
+     echo "Using /usr/bin/makedev to create more necessary devices..."
+     /usr/bin/makedev >/dev/null 2>&1
+  fi
+fi
+
+if [ -f /mkcdrecmedia ]; then
+        umount `head -n 1 /mkcdrecmedia` 2>/dev/null
+        mount -t iso9660 -o ro `head -n 1 /mkcdrecmedia` /mnt/cdrom || \
+	  mount -t vfat -o ro,shortname=winnt `head -n 1 /mkcdrecmedia` /mnt/cdrom
+        rm -f /dev/cdrom
+        ln -s `head -n 1 /mkcdrecmedia` /dev/cdrom
+elif [ -b /dev/ram2 ]; then
+        umount `head -n 1 /dev/ram2` 2>/dev/null
+        mount -t iso9660 -o ro `head -n 1 /dev/ram2` /mnt/cdrom || \
+	  mount -t vfat -o ro,shortname=winnt `head -n 1 /dev/ram2` /mnt/cdrom
+        rm -f /dev/cdrom
+        ln -s `head -n 1 /dev/ram2` /dev/cdrom
+elif [ -b /dev/rd/2 ]; then
+        umount `head -n 1 /dev/rd/2` 2>/dev/null
+        mount -t iso9660 -o ro `head -n 1 /dev/rd/2` /mnt/cdrom || \
+	  mount -t vfat -o ro,shortname=winnt `head -n 1 /dev/rd/2` /mnt/cdrom
+        rm -f /dev/cdrom
+        ln -s `head -n 1 /dev/rd/2` /dev/cdrom
+else
+        echo Can not find a RAM disk device at /dev/ram2 or /dev/rd/2!
+        echo I will not be able to automatically determine media.
+fi
+
+# /dev/sr0 disappears when we start udev (becomes /dev/scd0)
+umount $cddev 2>/dev/null
+mount -t iso9660 -o ro $cddev /mnt/cdrom 2>/dev/null || \
+  mount -t vfat -o ro,shortname=winnt $cddev /mnt/cdrom 2>/dev/null
+rc=$?
+if [ $rc -eq 0 ]; then
+	rm -f /dev/cdrom
+	ln -s $cddev /dev/cdrom
+else
+	mount -t iso9660 -o ro /dev/cdrom /mnt/cdrom 2>/dev/null || \
+	  mount -t vfat -o ro,shortname=winnt /dev/cdrom /mnt/cdrom 2>/dev/null
+	if [ $? -eq 1 ]; then
+		echo "Rescue media did not mount automatically!"
+		logger "Rescue media did not mount automatically!"
+	fi
+fi
+
+[ -f /proc/bus/usb/devices ] && mount -f -t usbdevfs usbdevfs /proc/bus/usb
+
+echo Starting syslog
+if [ -x /sbin/syslogd ] ; then
+   if /sbin/syslogd; then
+    echo "syslogd is running.  Check /var/log/messages to read the messages."
+    /sbin/klogd
+   fi 
+elif [ -x /etc/init.d/syslog ] ; then
+   /etc/init.d/syslog start
+fi 
+
+echo "Setting hostname"
+HOSTNAME=`cat /etc/HOSTNAME 2>/dev/null`
+if [ -z "${HOSTNAME}" ]; then
+   HOSTNAME=localhost
+fi
+echo ${HOSTNAME} > /proc/sys/kernel/hostname
+
+echo "Start the kerneld if possible:"
+if [  -x /sbin/kerneld -a ! -e /proc/sys/kernel/modprobe ]; then
+        /sbin/kerneld
+fi
+
+if [ -x /sbin/hwclock -a -f /etc/localtime ]; then
+        echo "Setting time"
+        # some versions of hwclock return unrecognized option `--localtime'
+        /sbin/hwclock --hctosys --localtime 2>/dev/null
+fi
+
+echo "Configuring kernel modules:"
+depmod -aq
+echo "Configuring loopback"
+/sbin/ifconfig lo 127.0.0.1 netmask 255.0.0.0
+/sbin/route add 127.0.0.1 lo
+if [ -z "${START_UDEV}" ]; then
+  # CHW only when not using udev
+  if [ -f /etc/rc.d/rc.network ]; then
+     echo "Configuring the network."
+     sleep 4
+     . /etc/rc.d/rc.network
+     . /etc/rc.d/rc.nfs
+  fi
+fi
+
+# usb modules need to be loaded to enable keyboard at boot
+if [ -f /etc/rc.d/rc.usb ]; then
+        echo "configuring usb devices"
+        . /etc/rc.d/rc.usb
+fi
+
+. /etc/rc.d/rc.inits
+
+# start inetd
+echo "Start inetd."
+inetd /etc/inetd.conf
+
+if [ -f /etc/rc.d/rc.network ]; then
+  if [ ! -z "${START_UDEV}" ]; then
+    sleep 4
+    ans=n
+    if which dialog ; then
+      dialog 2>/dev/null --timeout 30 --defaultno \
+        --yesno "Start network interfaces now ?" 8 40
+      if [ $? -eq 0 ]; then
+         ans=y
+      fi
+    else
+      echo -n -e "\n\n\n\a\aStart network interfaces now ? [n] "
+      read -t 30 ans
+    fi
+    case "$ans" in
+      [Yy]*)
+        . /etc/rc.d/rc.network
+        . /etc/rc.d/rc.nfs
+        ;;
+    esac
+    echo -e "\n\n"
+  fi
+fi
+
+echo "Executing local startup"
+. /etc/rc.d/rc.local
+echo "Done"

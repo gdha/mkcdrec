@@ -1,0 +1,638 @@
+#!/bin/bash
+## Make the ISO9660 file system CDrec.iso
+## Eventually we can burn the CDrec.iso image to a CDR too if BURNCDR=y
+## Written by Gratien D'haese - IT3 Consultants
+## Copyright (C) 2001-2008 - See also COPYING
+# $Id: makeISO9660.in,v 1.67 2009/05/18 14:38:22 gdha Exp $
+##############
+## WARNING: do NOT edit makeISO9660.sh file - it will be overwritten by
+##	    the Make process. Use makeISO9660.in instead for changes!!!
+##############
+## stdin is coming from the pipe, stdout is the screen, stderr is the tar log
+## file, and /dev/tty is the keyboard, fd 4 and 5 are used to save the
+## originals stdin/stderr during file manipulation
+##
+## print & warn function write to /dev/tty, echo lines are logged into $LOG
+############
+# PARAMETERS
+############
+%MKCDREC_DIR%
+%PATH%
+%BOOTARCH%
+%TMP_DIR%
+%ISOFS_DIR%
+%CDREC_ISO_DIR%
+%LOG%
+%CDRECORD%
+%CDRECORDOPT%
+%SCSIDEVICE%
+%WRITERSPEED%
+%BURNCDR%
+%MKISOFS%
+%BLANK_CDRW%
+%ISOVFY%
+%CD_EJECT%
+%DVD_Drive%
+%MAXCDSIZE%
+MY_TTY=`cat /tmp/my_tty`
+MODE=`cat $TMP_DIR/MODE`
+
+# for OBDR make BURNCDR=n
+[ -f $TMP_DIR/OBDR ] && BURNCDR=n
+
+# Functions
+#==========
+#
+
+# cleanup files left in an unfinished state
+#do_cleanup() {
+#^^^^^^^^^^^
+# remove the garbage
+#        echo "No cleanup done by `basename $0`"
+#}
+#
+# warn prints the first arg as a  warning message and then prompts for
+# continuation using the prompt function.
+#
+warn() {
+
+    echo -ne "[1;31;40mWARNING:[0;37;40m\n" > /dev/tty
+    echo -ne "[0;32;40m${1}[0;37;40m\n" > /dev/tty
+    prompt
+}
+
+error() {
+    if [ ! -s ${TMP_DIR}/USBKEY_DEV ]; then
+      umount `cat ${TMP_DIR}/USBKEY_DEV` > /dev/null 2>&1
+    fi
+    echo -ne "[0;31;47m    ERROR:    [0;37;40m\n" > /dev/tty
+    echo -ne "[0;32;40m${2}[0;37;40m\n" > /dev/tty
+    echo -ne "[0;37;40mPress [1;37;40m[ENTER][0;37;40m to continue: " > /dev/tty
+    read < ${MY_TTY}
+    exit ${1}
+}
+#
+# prompt takes no arguments and waits for user input
+#
+# returns null
+#
+prompt () {
+
+    echo -ne "[0;37;40mPress [1;37;40m[ENTER][0;37;40m to continue or [1;35;40m[CTRL-C][0;37;40m to abort: " > /dev/tty
+    read junk < ${MY_TTY}
+    echo ""
+    while true
+    do
+	echo -n "Are you sure you want to continue? yes/no: "
+	read a < ${MY_TTY}
+	if [ x$a = xyes  -o x$a = xy ] ; then
+		break
+	fi
+    done
+}
+
+print () {
+   str=${1}
+   echo -ne "${str}\n" > /dev/tty
+}
+
+burn_cdr() {
+#^^^^^^^^
+# cdrecord the CDrec.iso image to a CDR
+print "[1;37;40mBurning CDrec.iso to CDR[0;37;40m"
+echo "Burning CDrec.iso to CDR" >>${LOG}
+echo "${CDRECORD} dev=${SCSIDEVICE} speed=${WRITERSPEED} ${CDRECORDOPT} ${CD_EJECT} ${CDREC_ISO_DIR}/CDrec.iso"  >> ${LOG}
+
+rm -f /tmp/burn_cdr_NOK
+failcount=0
+while ! ${CDRECORD} dev=${SCSIDEVICE} speed=${WRITERSPEED} ${CDRECORDOPT} ${CD_EJECT} ${CDREC_ISO_DIR}/CDrec.iso  >> ${LOG}; do
+     failcount=$((failcount + 1))
+     if [ ${failcount} -gt 1 ]; then
+	print "[1;31;40mError: Cannot write to CDR.[0;37;40m\n"	
+	touch /tmp/burn_cdr_NOK
+	echo "Error writing to CDR..." >>${LOG}
+	break	# escape from loop if it keeps failing
+     fi
+     warn "Insert a CDR into your CD-Writer."
+     print "Burning CDrec.iso to CDR"
+     echo "Burning CDrec.iso to CDR" >>${LOG}
+done
+if [ ${failcount} -gt 1 ]; then
+   echo "FATAL error: cannot write to CDR - continue" >>${LOG}
+   print "Fatal error occured while trying to write to CDR! Continue."
+else
+   print "Done with burning CDrec.iso"
+   echo "Done with burning CDrec.iso" >>${LOG}
+fi
+}
+
+blank_cdrw() {
+# a CD-RW needs to be wipe-out first before rewriting (fast mode)
+print "[1;37;40mBlanking media: please be patient...[0;37;40m"
+# check if blanking is really needed, otherwise we can skip this step
+${CDRECORD} -toc dev=${SCSIDEVICE} >/tmp/cdr_status 2>&1 
+# first check if there is a CDR in the drive or not?
+grep -q "Cannot load media." /tmp/cdr_status
+if [ $? -eq 0 ]; then
+  # no CD in drive
+  echo "WARNING: no CD/DVD in drive found!" | tee -a ${LOG}
+  warn "Insert a rewritable CD/DVD into your driver"
+  # we will not recheck this in a loop as if you did not insert an
+  # CD/DVD then probably you did not care at all
+  ${CDRECORD} -toc dev=${SCSIDEVICE} >/tmp/cdr_status 2>&1
+fi
+# so if there was no CD/DVD in drive the following will fail too, but
+# we will continue with an attempt to burn where you get another chance
+# to insert an "empty" (as blanking is then out of the question) CD/DVD
+grep -q "Cannot read TOC header" /tmp/cdr_status
+if [ $? -ne 0 ]; then	# 0 means already BLANK CDRW
+  if [ ${MAXCDSIZE} -gt 800000 ]; then # we use size to make the choice
+    # media is of type DVD-RW
+    echo "Blanking DVD-RW: please be patient..." >>${LOG}
+    echo ${CDRECORD} dev=${SCSIDEVICE} speed=${WRITERSPEED} -format >>${LOG}
+    ${CDRECORD} dev=${SCSIDEVICE} speed=${WRITERSPEED} -format
+  else
+    # media is of type CD-RW
+    echo "Blanking CD-RW: please be patient..." >>${LOG}
+    echo ${CDRECORD} dev=${SCSIDEVICE} speed=${WRITERSPEED} blank=fast >>${LOG}
+    ${CDRECORD} dev=${SCSIDEVICE} speed=${WRITERSPEED} blank=fast
+  fi
+fi
+rm -f /tmp/cdr_status
+}
+
+
+split_file () {
+
+FILE_NAME=$1									#the name of the file to split
+MAX_FILE_SIZE=$2								#the size of the pieces in which the file will be split
+FILE_INIT_SIZE=`ls -l ${FILE_NAME} | awk '{print $5}'`		#the initial size of the file to split
+BYTES_READ=0							#the number of bytes read
+PART_NUM=0								#the suffix number of the file splitted
+BS=1024
+COUNT=$((${MAX_FILE_SIZE}/${BS}))
+
+echo "Current size of ${FILE_NAME} is ${FILE_INIT_SIZE}" | tee -a ${LOG}
+echo "Starting to split file ${FILE_NAME} into pieces of size ${MAX_FILE_SIZE}" | tee -a ${LOG}
+
+while [ ${BYTES_READ} -lt ${FILE_INIT_SIZE} ]
+do
+	echo "  executing dd if=${FILE_NAME} of=${FILE_NAME}.part${PART_NUM} bs=${BS} count=${COUNT} skip=$((${BYTES_READ}/${BS}))" | tee -a ${LOG}
+	dd if=${FILE_NAME} of=${FILE_NAME}.part${PART_NUM} bs=${BS} count=${COUNT} skip=$((${BYTES_READ}/${BS}))
+
+	echo "  ${FILE_NAME}.part${PART_NUM} is full" | tee -a ${LOG}
+
+	BYTES_READ=$((${BS}*${COUNT}+${BYTES_READ}))
+	echo "  $BYTES_READ bytes read" | tee -a ${LOG}
+	PART_NUM=$((PART_NUM+1))
+	#if [ $((${FILE_INIT_SIZE}-${BYTES_READ})) -lt $((${BS}*${COUNT})) ]
+	#then		#for the last piece of the file
+	#	BS=1
+	#	COUNT=$((${FILE_INIT_SIZE}-${BYTES_READ}))
+	#fi
+done
+echo "  split is finished, removing file ${FILE_NAME} " | tee -a ${LOG}
+> ${FILE_NAME}
+
+}
+
+###############################################
+##	MAIN                                 ##
+###############################################
+
+exec 4<&0	# save original stdin as FD4
+print "-------------< Entering makeISO9660.sh >---------------"
+echo "-------------< Entering makeISO9660.sh >---------------" >>${LOG}
+cd ${MKCDREC_DIR}	# return to basis Luke
+
+VERSION="`cat ${MKCDREC_DIR}/VERSION`"
+DATE=`cat ${TMP_DIR}/DATE`
+
+VOLID="CDrec-${DATE}"	# Volume ID for CD (name mounted on Win systems)
+isofsdir="isofs/"
+
+if [ "${MODE}" = "superrescue" ]; then
+   dirs="/lib /etc /usr/local/lib /usr/local/bin /usr/local/sbin /usr/local/include /sbin /usr/bin /usr/sbin /usr/include /usr/lib/perl5 /usr/lib/mc /usr/lib/gcc-lib /usr/lib/python2.2 /usr/lib/rpm /bin "
+
+   mniso="isofs/"
+
+   rs=''
+   md='/superrescue'
+   for dd in $dirs ; do
+    echo $dd ;
+    rs=$rs' '$md$dd/'='$dd;
+   done
+   echo $rs
+   isofsdir=${mniso}" "$rs
+   isoopts='-graft-points'
+fi
+
+if [ -f ${TMP_DIR}/NFS ]; then
+	#isoopts="-m '*.tar.gz'"
+	isoopts='-exclude-list /tmp/mkisofs-exclude-list'
+        cat >/tmp/mkisofs-exclude-list <<EOX
+*.tar.gz*
+*.tar.bz2*
+EOX
+
+fi
+
+# multi-volume CDR - check volno file - 0: single volume
+volno=`cat ${TMP_DIR}/volno`
+
+# automatically eject CDR(W) after writing?
+if [ "${CD_EJECT}" = "y" ]; then
+   CD_EJECT="-eject "
+else
+   CD_EJECT=" "
+fi
+
+if [ ${volno} -gt 0 ]; then	# multi volume set
+	print "Current ${DESTINATION} is a split backup"
+	echo "Current ${DESTINATION} is a split backup" >>${LOG}
+	# Dev._Fs.tgz_ means an uncomplete gzipped tar file
+	if [ "${DONE}" = "N" ]; then
+	  mv ${DESTINATION} ${DESTINATION}_
+	fi
+	print "Muli-volume ${volno} of mkCDrec set!"
+	echo "Muli-volume ${volno} of mkCDrec set!" >>${LOG}
+	VOLID=${VOLID}_${volno}
+	print "Label this CDR with \"${VOLID}\"."
+	echo "Label this CDR with \"${VOLID}\"." >>${LOG}
+fi
+
+# Mark the VOLID also on isofs/ before mkisofs
+touch ${ISOFS_DIR}/${VOLID}	# single volume has a VOLID of 16 chars.
+
+# Leave an easy to spot system identification of CD-ROM
+touch ${ISOFS_DIR}/`hostname`_`uname -r`
+ 
+# Copy the [autorun.inf] to the isofs/ dir
+cp ${MKCDREC_DIR}/doc/autorun.inf ${ISOFS_DIR}
+ 
+# At restore time we can check if VOLID contains an underscore which means
+# there are more CDs to restore
+
+exec 5<&2	# save original STDERR
+cd ${TMP_DIR}
+# there can only be one *.log at a given time (other are already compressed)
+ls *.log >/dev/null 2>&1
+if [ $? -eq 0 ]; then	# if true, then we have a backup to CD
+ for tar_log in `ls *.log`
+ do
+   dsk_fs_prefix=`echo ${tar_log} | cut -d"." -f1-2`
+ done
+ # compress the tar log
+ gzip -f9c ${dsk_fs_prefix}.log > ${ISOFS_DIR}/${dsk_fs_prefix}.log.gz
+ if [ "${DONE}" = "Y" ]; then
+   rm -f ${dsk_fs_prefix}.log
+ fi
+fi
+
+# Do integrity test before to split too big files
+cd ${ISOFS_DIR}
+print
+print "[1;37;40mDoing integrity testing on backups.[0;37;40m"
+print
+echo "Doing integrity testing on backups." >>${LOG}
+# stderr is used instead of stdout
+ls *.gz >/dev/null 2>&1 && gzip -v -t *.gz  2>&1 | tee -a ${LOG}
+ls *.bz2 >/dev/null 2>&1 && bzip2 -v -t *.bz2 2>&1 | tee -a ${LOG}
+
+
+#now we will split the files with size > 2Gb into files of size 1Gb ( iso9660 can't handle files with size > 2Gb)
+# This needs to be done before to make a checksum of all files
+cd ${MKCDREC_DIR}
+for too_big_file in `find ${isofsdir} -size +1900000k`
+do
+	split_file ${too_big_file} 1073741824  \;	#this is 1Go in bytes ;-)
+done
+#find ${isofsdir} -size +1900000k -exec split_file {} 1073741824 \;	#this is 1Go in bytes ;-)
+
+# Before makeisofs phase make a checksum of all files on CD
+cd ${ISOFS_DIR}
+# ${MKCDREC_DIR}/bin/cksfv * > Checksums.sfv
+print "Busy with calculating the md5sum of all the files on the media"
+echo "md5sum of the files on the media are stored in Checksums.md5" >>${LOG}
+for FL in `find . -type f`
+do
+    md5sum ${FL} 2>/dev/null >> Checksums.md5
+done
+cat Checksums.md5 >>${LOG}
+
+
+cd ${MKCDREC_DIR}	# must be here to make isofs
+
+
+# CHW -- skip when makeing USB key ---
+if [ ! -s ${TMP_DIR}/USBKEY_DEV ]; then
+# the complete ISO making will be skipped as everything is on USB disk (gdha)
+
+# double check - is MKISOFS found?
+if [ ! -f `which ${MKISOFS} >/dev/null 2>&1` ]; then
+   echo "Did not find ${MKISOFS}! Please use an absolute path in Config.sh" >> ${LOG}
+   error 1 "Did not find ${MKISOFS}! Please use an absolute path in Config.sh"
+fi
+
+print
+print "[1;37;40mBe patient - busy with mkisofs...[0;37;40m"
+print
+
+# OK, let's do it and make CDrec.iso and the first time make it bootable
+if [ ${volno} -le 1 ]; then	# single or 1st multi-set CD
+   if [ x${BOOTARCH} = xx86 ]; then
+      if [ ! -d isofs/isolinux ]; then
+	if  [ ${DVD_Drive} -eq 0 -o "${BURNCDR}" = "n" -o -f ${TMP_DIR}/Iso_only ]; then
+	# CDR(w) only
+        # using syslinux to emulate bootable floppy on CD (El-Torito emulation)
+        echo "Making a bootable CD-ROM with syslinux" >>${LOG}
+        echo mkisofs -J -r -T -publisher "${VERSION}" -V "${VOLID}" -o ${CDREC_ISO_DIR}/CDrec.iso -b bootflop.img ${isoopts} ${isofsdir} >>${LOG}
+	pwd
+        ${MKISOFS} -J -r -T -publisher "${VERSION}" -V "${VOLID}" -o ${CDREC_ISO_DIR}/CDrec.iso -b bootflop.img ${isoopts} ${isofsdir}
+        if [ $? -ne 0 ]; then
+           warn "Problem with mkisofs: do you want to go on?"
+        fi
+	else # of [ ${DVD_Drive} -eq 0 ]
+	 # DVD+R(W) only
+	 echo "Making a bootable DVD+R(W) with syslinux" >>${LOG}
+	 echo "growisofs -Z ${SCSIDEVICE} -J -r -publisher "${VERSION}" -V "${VOLID}" -b bootflop.img ${isoopts} ${isofsdir}" >> ${LOG}
+	 growisofs -Z ${SCSIDEVICE} -J -r -publisher "${VERSION}" -V "${VOLID}" -b bootflop.img ${isoopts} ${isofsdir}
+	 if [ $? -ne 0 ]; then
+	   warn "Problem with growisofs: do you want to go on?"
+	 fi
+	fi # end of CDR or DVDR
+      else # of [ ! -d isofs/isolinux ]
+	if  [ ${DVD_Drive} -eq 0 -o "${BURNCDR}" = "n" -o -f ${TMP_DIR}/Iso_only ]; then
+	# CDR(w) only
+        # detected memtest.bin - using isolinux to boot
+        echo "Making a bootable CD-ROM with isolinux" >>${LOG}
+        echo ${MKISOFS} -J -r -T -publisher "${VERSION}" -V "${VOLID}" \
+           -o ${CDREC_ISO_DIR}/CDrec.iso -b isolinux/isolinux.bin \
+           -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
+           -boot-info-table ${isoopts} ${isofsdir} >>${LOG}
+        ${MKISOFS} -J -r -T -publisher "${VERSION}" -V "${VOLID}" \
+	   -o ${CDREC_ISO_DIR}/CDrec.iso -b isolinux/isolinux.bin \
+	   -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
+	   -boot-info-table ${isoopts} ${isofsdir}
+        if [ $? -ne 0 ]; then
+	   warn "Problem with mkisofs: isolinux bootable CD-ROM failed"
+        fi
+	else ### DVD+R(W)
+	 echo "Making a bootable DVD+R(W) with isolinux" >>${LOG}
+	 growisofs -Z ${SCSIDEVICE} -J -r -publisher "${VERSION}" \
+	 -V "${VOLID}"  -b isolinux/isolinux.bin \
+	 -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
+	 -boot-info-table ${isoopts} ${isofsdir}
+	 if [ $? -ne 0 ]; then
+		warn "Problem with growisofs: isolinux bootable CD-ROM failed"
+	 fi
+	fi ## end of CDR(W) or DVDR(W)
+      fi # end of [ ! -d isofs/isolinux ]
+   elif  [ x${BOOTARCH} = xx86_64 ]; then
+	if  [ ${DVD_Drive} -eq 0 -o "${BURNCDR}" = "n" -o -f ${TMP_DIR}/Iso_only ]; then
+	    # make bootable CD using isolinux
+	    echo "Making a bootable CD-ROM with isolinux" >>${LOG}
+	    echo ${MKISOFS} -l -J -r -T -publisher "${VERSION}" -V "${VOLID}" \
+	    -o ${CDREC_ISO_DIR}/CDrec.iso -b isolinux/isolinux.bin \
+	    -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
+	    -boot-info-table -hide-joliet-trans-tbl -hide-rr-moved \
+	    -allow-leading-dots  ${isoopts} ${isofsdir} >>${LOG}
+	    ${MKISOFS} -l -J -r -T -publisher "${VERSION}" -V "${VOLID}" \
+	    -o ${CDREC_ISO_DIR}/CDrec.iso -b isolinux/isolinux.bin \
+	    -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
+	    -boot-info-table -hide-joliet-trans-tbl -hide-rr-moved \
+	    -allow-leading-dots  ${isoopts} ${isofsdir}
+	    if [ $? -ne 0 ]; then
+		warn "Problem with mkisofs: isolinux bootable CD-ROM failed"
+	    fi
+	else
+	    # make bootable DVD using isolinux
+	    echo "Making a bootable DVD+R(W) with isolinux" >>${LOG}
+	    echo growisofs -Z ${SCSIDEVICE} -J -r -publisher "${VERSION}" \
+	    -V "${VOLID}"  -b isolinux/isolinux.bin \
+	    -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
+	    -boot-info-table ${isoopts} ${isofsdir} >>${LOG}
+	    growisofs -Z ${SCSIDEVICE} -J -r -publisher "${VERSION}" \
+	    -V "${VOLID}"  -b isolinux/isolinux.bin \
+	    -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
+	    -boot-info-table ${isoopts} ${isofsdir}
+	    if [ $? -ne 0 ]; then
+		warn "Problem with growisofs: isolinux bootable CD-ROM failed"
+	    fi
+	fi # of x86_64
+   elif  [ x${BOOTARCH} = xia64 ]; then
+	if  [ ${DVD_Drive} -eq 0 -o "${BURNCDR}" = "n" -o -f ${TMP_DIR}/Iso_only ]; then
+		# make a bootable CD for IA64
+		echo "Making a bootable CD-ROM for ${BOOTARCH} under ${isofsdir}" >> ${LOG}
+		mkdir ${isofsdir}boot
+		cp ${TMP_DIR}/boot.img ${isofsdir}boot/boot.img
+		echo ${MKISOFS} -J -r -T -publisher "${VERSION}" -V "${VOLID}" -v -pad -b boot/boot.img -c boot/monboot.catalog -no-emul-boot -o ${CDREC_ISO_DIR}/CDrec.iso ${isofsdir} >>${LOG}
+		${MKISOFS} -J -r -T -publisher "${VERSION}" -V "${VOLID}" -v -pad -b boot/boot.img -c boot/monboot.catalog -no-emul-boot -o ${CDREC_ISO_DIR}/CDrec.iso ${isofsdir}
+		if [ $? -ne 0 ]; then
+		   warn "Problem with creating a bootable ISO9660 image on ${BOOTARCH}"
+		fi
+	else
+		#make a bootable dvd for ia64
+		if [ "${BURNCDR}" = "n" ]; then
+			# we make a dvd iso image
+			echo "Making a bootable DVD-ROM for ${BOOTARCH} under ${isofsdir}" >> ${LOG}
+			mkdir ${isofsdir}boot
+			cp ${TMP_DIR}/boot.img ${isofsdir}boot/boot.img
+			echo ${MKISOFS} -J -r -T -v -pad -b boot/boot.img -c boot/monboot.catalog -no-emul-boot -o ${CDREC_ISO_DIR}/CDrec.iso ${isofsdir} >>${LOG}
+			${MKISOFS} -J -r -T -v -pad -b boot/boot.img -c boot/monboot.catalog -no-emul-boot -o ${CDREC_ISO_DIR}/CDrec.iso ${isofsdir}
+			if [ $? -ne 0 ]; then
+			   warn "Problem with creating a bootable ISO9660 image on ${BOOTARCH}"
+			fi
+
+		else
+			# we don't make an iso image, we prefer to burn it directly
+			echo "Making a bootable DVD-ROM for ${BOOTARCH} under ${isofsdir} and burn it directly" >> ${LOG}
+			mkdir ${isofsdir}boot
+			cp ${TMP_DIR}/boot.img ${isofsdir}boot/boot.img
+			echo growisofs -Z ${SCSIDEVICE} -J -r -T -v -pad -b boot/boot.img -c boot/monboot.catalog -no-emul-boot -publisher "${VERSION}" -V "${VOLID}" ${isoopts} ${isofsdir} >> ${LOG}
+			growisofs -Z ${SCSIDEVICE} -J -r -T -v -pad -b boot/boot.img -c boot/monboot.catalog -no-emul-boot -publisher "${VERSION}" -V "${VOLID}" ${isoopts} ${isofsdir}
+			if [ $? -ne 0 ]; then
+			   warn "Problem with creating a bootable ISO9660 image on ${BOOTARCH}"
+			fi
+		fi
+	fi
+   elif [ x${BOOTARCH} = xnew-powermac ]; then
+        # FIXME: A lot of x86 counterpart happens in bootflop.sh, not here.
+	# Inconsistent?
+        echo "Making a bootable CD-ROM for New-World Macintosh" >>${LOG}
+        echo mkisofs -J -r -publisher "${VERSION}" -V "${VOLID}" -o ${CDREC_ISO_DIR}/CDrec.iso -b bootflop.img ${isoopts} ${isofsdir} >>${LOG}
+        ${MKISOFS} -hfs -part -publisher "${VERSION}" -hfs-volid "${VOLID}" --cap -l -L -allow-multidot -relaxed-filenames -T -hfs-unlock -o ${CDREC_ISO_DIR}/CDrec.iso ${isoopts} ${isofsdir}
+        if [ $? -ne 0 ]; then
+           warn "Problem with mkisofs: do you want to go on?"
+        fi
+	# FIXME: it should be possible to do this directly with mkisofs.
+	# If the following becomes uneccessary, then remove checks for
+	# hfsutils in test.sh.
+	echo "Blessing CD-ROM filesystem" | tee -a ${LOG}
+        hmount ${CDREC_ISO_DIR}/CDrec.iso
+	hattrib -t DDim -c ddsk initrd.gz
+	hattrib -t tbxi yaboot
+	hattrib -b :
+	humount
+   elif [ x${BOOTARCH} = xsparc ]; then
+	echo "Making a bootable CD-ROM for Sparc platform" >>${LOG}
+	if [ -f ${isofsdir}/boot/cd.b ]; then
+	echo ${MKISOFS} -publisher "${VERSION}" -V "${VOLID}" -T -J -l -N -r -v  \
+	-silo-bootblock boot/cd.b -silo-boot /boot/second.b -silo-conf-file /boot/silo.conf \
+	-o ${CDREC_ISO_DIR}/CDrec.iso ${isoopts} ${isofsdir} >> ${LOG}
+
+	${MKISOFS} -publisher "${VERSION}" -V "${VOLID}" -T -J -l -N -r -v  \
+	-silo-bootblock boot/cd.b -silo-boot boot/second.b -silo-conf-file /boot/silo.conf \
+	-o ${CDREC_ISO_DIR}/CDrec.iso ${isoopts} ${isofsdir}
+
+	elif [ -f ${isofsdir}/boot/isofs.b ]; then
+	echo ${MKISOFS} -publisher "${VERSION}" -V "${VOLID}" -T -d -J -l -N -r -v  \
+	-G /boot/isofs.b -B ... -o ${CDREC_ISO_DIR}/CDrec.iso ${isoopts} ${isofsdir}>> ${LOG}
+	${MKISOFS} -publisher "${VERSION}" -V "${VOLID}" -T -d -J -l -N -r -v  \
+	-G /boot/isofs.b -B ... -o ${CDREC_ISO_DIR}/CDrec.iso ${isoopts} ${isofsdir}
+	else
+	error 1 "Cannot make a bootable Sparc CD-ROM"
+	fi
+   else
+        error 1 "Do not know how to build bootable CD-ROM for ${BOOTARCH}"
+   fi
+else
+   # volno >= 2
+   echo mkisofs -J -r -publisher "${VERSION}" -V "${VOLID}" -o ${CDREC_ISO_DIR}/CDrec.iso ${isoopts} ${isofsdir} >>${LOG}
+   ${MKISOFS} -J -r -publisher "${VERSION}" -V "${VOLID}" -o ${CDREC_ISO_DIR}/CDrec.iso ${isoopts} ${isofsdir}
+   if [ $? -ne 0 ]; then
+      warn "Problem with mkisofs: do you want to go on?"
+   fi
+fi
+
+
+if  [ ${DVD_Drive} -eq 1 -a "${BURNCDR}" = "n" -o  ${DVD_Drive} -eq 0 ]; then # CDR(W) only as DVD write directly to media
+#### in case of DVDs we do not have an image file to test! Skip it.
+#### Currently we do not care for multiple volume sets! Skip it too.
+#### We do not care about writing to CDR(W) too. Skip it.
+if [ -x ${ISOVFY} ]; then
+   # check CDrec.iso on integrity if possible
+   print "Checking ${CDREC_ISO_DIR}/CDrec.iso integrity..."
+   echo "Checking ${CDREC_ISO_DIR}/CDrec.iso integrity..." >>${LOG}
+   ${ISOVFY} ${CDREC_ISO_DIR}/CDrec.iso | tee -a ${LOG}
+fi
+mkdir ${TMP_DIR}/iso.$$
+print "The ISO9660 mount test"
+echo "The ISO9660 mount test" >>${LOG}
+mount -o loop -o ro -t iso9660 ${CDREC_ISO_DIR}/CDrec.iso ${TMP_DIR}/iso.$$
+if [ $? -ge 1 ]; then
+   rmdir  ${TMP_DIR}/iso.$$
+   echo "Cannot mount ${CDREC_ISO_DIR}/CDrec.iso. Bad ISO9660 format." >>${LOG}
+   warn "Cannot mount ${CDREC_ISO_DIR}/CDrec.iso. Bad ISO9660 format."
+else
+   print "${CDREC_ISO_DIR}/CDrec.iso mounted successfully."
+   echo "${CDREC_ISO_DIR}/CDrec.iso mounted successfully." >>${LOG}
+fi
+
+# do a serious checking on the boot CD only
+if [ "${HEAVY_VERIFY}" = "y" ] && [ ${volno} -le 1 ]; then
+    mkdir ${TMP_DIR}/rd-base.$$
+    bunzip2 -c ${TMP_DIR}/iso.$$/rd-base.img.bz2 > ${TMP_DIR}/rd-base.img.$$
+    mount -o loop -o ro -t ${ROOT_FS} ${TMP_DIR}/rd-base.img.$$ ${TMP_DIR}/rd-base.$$
+    if [ $? -ge 1 ]; then
+	echo "rd-base.img is corrupt! CD would never boot correctly.">> ${LOG}
+	rm -rf ${TMP_DIR}/rd-base.$$ ${TMP_DIR}/rd-base.img.$$
+	error 1 "rd-base.img is corrupt! CD would never boot correctly."
+    fi
+    if [ ! "${ENC_PROG_CIPHER}" = "cat" ]; then
+        echo "[1;33m"
+	encwith=`cat ${TMP_DIR}/rd-base.$$/etc/recovery/EncryptedWith`
+	for encf in `ls ${TMP_DIR}/iso.$$/*.tar.gz.${encwith} 2>/dev/null`
+	do
+    	  openssl ${encwith} -in ${encf} -d | tar tvzf -
+          if [ $? -eq 1 ]; then
+	    warn "Error listing encrypted tarball ${encf}."
+	    echo "Error listing encrypted tarball ${encf}." >> ${LOG}
+	    exit 1
+	  else
+	    print "listed encrypted tarball ${encf} successfully."
+	    echo "listed encrypted tarball ${encf} successfully." >>${LOG}
+	  fi
+	done
+	echo "[0;37;40m"
+    fi
+    umount ${TMP_DIR}/rd-base.$$ 2> /dev/null
+    rm -rf ${TMP_DIR}/rd-base.$$ ${TMP_DIR}/rd-base.img.$$
+fi
+
+umount ${TMP_DIR}/iso.$$ 2>/dev/null
+rm -rf ${TMP_DIR}/iso.$$
+print "${CDREC_ISO_DIR}/CDrec.iso seems to be OK."
+echo "${CDREC_ISO_DIR}/CDrec.iso seems to be OK." >>${LOG}
+
+# implant a md5sum into the iso9660 CDrec.iso image
+echo "Calculating and implanting md5sum into CDrec.iso" | tee -a ${LOG}
+implantisomd5 ${CDREC_ISO_DIR}/CDrec.iso | tee -a ${LOG}
+
+
+if [ "${BURNCDR}" = "y" ]; then
+	if [ "${BLANK_CDRW}" = "y" ]; then
+	   if [ ${volno} -gt 1 ]; then
+	      # Be carefull: do not blank previous (first?)  CDRW
+	      warn "Replace the CDRW in your CD-ReWriter."
+	   fi
+	   blank_cdrw
+	fi
+	burn_cdr
+	if [ ! -f /tmp/burn_cdr_NOK ]; then
+	  print "Done with burning CDrec.iso with VolID ${VOLID}"
+	  echo "Done with burning CDrec.iso with VolID ${VOLID}" >>${LOG}
+	else
+	  warn "Save ISO image as ${CDREC_ISO_DIR}/CDrec.iso.${VOLID} ?"
+	  mv  ${CDREC_ISO_DIR}/CDrec.iso  ${CDREC_ISO_DIR}/CDrec.iso.${VOLID}
+	fi
+fi
+
+if [ ${volno} -gt 0 ]; then
+  if [ "${BURNCDR}" = "n" ]; then
+    # we move CDrec.iso to an useful name and continue
+    mv ${CDREC_ISO_DIR}/CDrec.iso ${CDREC_ISO_DIR}/${VOLID}
+    if [ $? -eq 0 ]; then
+      print "Saved this CDrec.iso as ${CDREC_ISO_DIR}/${VOLID}"
+      echo "Saved this CDrec.iso as ${CDREC_ISO_DIR}/${VOLID}" >>${LOG}
+    else
+      warn "Problem with moving CDrec.iso to ${CDREC_ISO_DIR}/${VOLID}"
+    fi
+  fi
+  # delete more prudent in case ${CDREC_ISO_DIR} is a sub-dir of ${ISOFS_DIR}
+  print "Removing content of ${ISOFS_DIR} for next CD set"
+  echo "Removing content of ${ISOFS_DIR} for next CD set" >>${LOG}
+  (cd ${ISOFS_DIR}; rm -vf *; rm -rvf doc utilities isolinux) | tee -a ${LOG}
+fi
+
+print "Protect the ISO image(s)."
+chmod 600 ${CDREC_ISO_DIR}/CDrec*
+
+print "The CDrec image(s) are stored in directory ${CDREC_ISO_DIR}"
+echo "The CDrec image(s) are stored in directory ${CDREC_ISO_DIR}" >>${LOG}
+ls -l ${CDREC_ISO_DIR}/CDrec* | tee -a ${LOG}
+
+
+print "-------------< Leaving makeISO9660.sh >--------------"
+echo "-------------< Leaving makeISO9660.sh >--------------" >>${LOG}
+
+if [ ${volno} -gt 0 ]; then
+   print "Continuing with backing up ${DESTINATION}"
+   echo "Continuing with backing up ${DESTINATION}" >>${LOG}
+fi
+
+fi # END of [ ${DVD_Drive} -eq 0 ]
+
+else
+  # CHW -- when making USB key ---
+  echo "Content of USB disk `cat ${TMP_DIR}/USBKEY_DEV`" | tee -a ${LOG}
+  ls -l `cat ${TMP_DIR}/USBKEY_DEV` | tee -a ${LOG}
+  umount `cat ${TMP_DIR}/USBKEY_DEV` > /dev/null 2>&1
+  print "-------------< Leaving makeISO9660.sh >--------------"
+  echo "-------------< Leaving makeISO9660.sh >--------------" >>${LOG}
+fi # end of USBKEY_DEV
+
+
+exec 2<&5 5<&-	# restore original STDERR and close fd5
+exec 0<&4 4<&-	# restore original stdin and close fd4
+

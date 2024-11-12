@@ -1,0 +1,83 @@
+# restore_mbr script
+# Purpose: restore the saved /etc/recovery/mbr.DEV to DEV again (or another
+# Device.
+# Usage:
+#	restore_mbr hda [new_device]
+#	if [new_device] is not given we assume original device, e.g.hda
+#
+# Author: Gratien D'haese
+# License: GPL
+# Date : $Id: restore_mbr,v 1.1 2005/03/05 14:18:36 gdha Exp $
+#
+
+_Usage () {
+echo "Usage: restore_mbr dev [new_dev]"
+echo "       dev is found under /etc/recovery/mbr.dev"
+echo "       [new_dev] is optional - write mbr to new_dev instead."
+
+}
+
+if [ $# -lt 1 ]; then
+	_Usage
+	exit 1
+fi
+
+DEV=$1
+_DEV=`echo $DEV | sed -e 's;/;_;g'`
+if [ ! -f /etc/recovery/mbr.${_DEV} ]; then
+   echo "Oops. File not found: /etc/recovery/mbr.${_DEV}"
+   exit 1
+fi
+
+if [ $# -eq 2 ]; then
+   NEW_DEV=$2
+else
+   NEW_DEV=${DEV}
+fi
+
+echo
+echo "Do you just want to restore the boot sector (446 bytes) of the mbr,"
+echo "or the partition table (512 bytes) also?"
+echo
+echo "You should try the boot sector then if that isn't enough try the whole"
+echo "mbr (512 bytes)."
+echo
+echo "Answer 1 for boot sector (first 446 bytes)"
+echo "Answer 2 for the whole mbr (512 bytes)"
+echo "Answer 3 for just the partition table (last 64 bytes)"
+echo
+echo -n "Answer 1 2 3 : "
+read ans
+
+ERR=0
+if [ "$ans" = "1" ]; then
+  dd if=/etc/recovery/mbr.${_DEV} of=/dev/${NEW_DEV} bs=446 count=1 >/dev/null 2>&1
+  if [ ! $? = 0 ]; then
+     ERR=1
+  fi
+  MBR="mbr boot sector (first 446 bytes)"
+elif [ "$ans" = "2" ]; then
+  dd if=/etc/recovery/mbr.${_DEV} of=/dev/${NEW_DEV} bs=512 count=1 >/dev/null 2>&1
+  if [ ! $? = 0 ]; then
+     ERR=1
+  fi
+  MBR="whole mbr (512 bytes)"
+elif [ "$ans" = "3" ]; then
+  dd if=/etc/recovery/mbr.${_DEV} of=/dev/${NEW_DEV} bs=1 count=64 skip=446 seek=446 >/dev/null 2
+  if [ ! $? = 0 ]; then
+     ERR=1
+  fi
+  MBR="mbr partition table (last 64 bytes)"
+else
+  echo
+  echo "Cancelled."
+  exit
+fi
+if [ $ERR = 1 ]; then
+   echo
+   echo "There was a problem with the restore of the $MBR to /dev/${NEW_DEV}"
+   exit 1
+else
+   echo
+   echo "$MBR restored successfullt to /dev/${NEW_DEV}"
+fi

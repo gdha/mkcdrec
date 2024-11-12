@@ -1,0 +1,35 @@
+mkcdrec (0.9.8-5) experimental; urgency=low
+
+  * added support for USB keys
+
+ -- Christian Werner <chw@ch-werner.de>  Mon, 14 Jan 2008 19:03:43 +0100
+
+mkcdrec (0.9.8-4) experimental; urgency=low
+
+  * improved depends plus fixes for ubuntu 7.x
+
+ -- Christian Werner <chw@ch-werner.de>  Sun,  9 Dec 2007 20:20:43 +0100
+
+mkcdrec (0.9.8-3) experimental; urgency=low
+
+  * added 3w-* raid controllers, cleanups in restore_common.sh and rc.dialog
+
+ -- Christian Werner <chw@ch-werner.de>  Thu, 06 Dec 2007 11:01:33 +0100
+
+mkcdrec (0.9.8-2) experimental; urgency=low
+
+  * more fixes regarding CD mounting, switch_root, IDE chip drivers
+
+ -- Christian Werner <chw@ch-werner.de>  Fri, 30 Nov 2007 07:01:53 +0100
+
+mkcdrec (0.9.8-1) experimental; urgency=low
+
+  * initial packaging, new upstream release
+
+ -- Christian Werner <chw@ch-werner.de>  Tue, 27 Nov 2007 09:49:11 +0100
+
+mkcdrec (0.9.7-1) experimental; urgency=low
+
+  * initial packaging
+
+ -- Christian Werner <chw@ch-werner.de>  Tue, 26 Jun 2007 18:30:33 +0200

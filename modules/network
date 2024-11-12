@@ -1,0 +1,15 @@
+ETC_FILES="$ETC_FILES sysconfig/network sysconfig/static-routes \
+  sysctl.conf exports"
+
+BINARIES="$BINARIES ip ifup ifdown ifup-pre-local ifenslave ifuser ipcalc arping sysctl"
+
+MAN_PAGES="$MAN_PAGES route"
+
+INITS="$INITS /etc/init.d/network"
+
+grep DHCP /etc/sysconfig/network >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+   # DHCP is being used
+   BINARIES="$BINARIES dhcpcd dhclient pump"
+   MAN_PAGES="$MAN_PAGES dhcpcd dhclient pump"
+fi

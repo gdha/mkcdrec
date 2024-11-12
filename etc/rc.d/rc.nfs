@@ -1,0 +1,8 @@
+# This needs to be made into a module.
+if [ -x /sbin/portmap ]; then
+	echo "Starting RPC portmap daemon"
+	/sbin/portmap
+	if [ -f /sbin/rpc.ugidd ];then
+		/sbin/rpc.ugidd
+	fi
+fi

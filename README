@@ -1,0 +1,43 @@
++----------------------------------------------------------------------+
+|                 mkCDrec - Make CD-ROM Recovery utility               |
+|                                                                      |
+|       Copyright (c)2000-2011  Gratien D'haese - IT3 Consultants      |
+|                                                                      |
++----------------------------------------------------------------------+
+
+    This program is free software; you can redistribute it and/or modify 
+    it under the terms of the GNU General Public License as published by 
+    the Free Software Foundation; either version 2 of the License, or 
+    (at your option) any later version. 
+
+    This program is distributed in the hope that it will be useful, 
+    but WITHOUT ANY WARRANTY; without even the implied warranty of 
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+    GNU General Public License for more details. 
+
+    You should have received a copy of the GNU General Public License 
+    along with this program; if not, write to the Free Software 
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+
+This backup solution contains the work of a lot of other people too. See
+http://mkcdrec.ota.be/credits.html for some of them.
+My parts stands under the GNU Public License (see the file COPYING). 
+For all the other people's work, check their licenses. 
+
+I've made this mkcdrec utility for my special own purposes. Maybe it's also
+useful for you. I don't take any responsibilities for what you are doing with
+it, especially I will not be responsibile if you fail to restore a backup, which
+you had created with it. At the moment it is still an early beta version, which
+is tested but cannot give any guarantees.
+NO WARRANTY!
+
+******************************************************************************
+Be aware: mkCDrec is not designed to replace backups! I repeat: backup your
+system first before playing with mkCDrec. Do not yell at me when you loose 
+data due to mkCDrec and you forgot to backup first!
+******************************************************************************
+
+For more information about it, see http://mkcdrec.ota.be/index.html .
+
+If you like this piece of software then make a small donation at:
+http://sourceforge.net/donate/index.php?group_id=25327

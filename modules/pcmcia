@@ -1,0 +1,7 @@
+ETC_FILES="$ETC_FILES sysconfig/pcmcia pcmcia.conf"
+
+BINARIES="$BINARIES cardctl cardmgr ifport iwconfig"
+
+MAN_PAGES="$MAN_PAGES cardctl cardmgr iwconfig"
+
+INITS="$INITS /etc/init.d/pcmcia"

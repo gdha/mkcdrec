@@ -1,0 +1,121 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+CFLAGS = -Wall -g
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+
+INSTDIR = $(CURDIR)/debian/tmp
+MKCDIR = $(INSTDIR)/var/opt/mkcdrec
+MAN8DIR = $(INSTDIR)/usr/share/man/man8
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	# nothing to configure
+	touch configure-stamp
+
+
+build: build-stamp
+build-stamp: configure-stamp 
+	dh_testdir
+	$(MAKE) -f $(CURDIR)/Makefile.x86 build
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+	-$(MAKE) -f $(CURDIR)/Makefile.x86 distclean
+	rm -rf $(CURDIR)/busybox/_install
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+	mkdir -p $(INSTDIR)/usr/sbin
+	mkdir -p $(MKCDIR)/busybox/applets
+	mkdir -p $(MKCDIR)/bin
+	mkdir -p $(MKCDIR)/contributions
+	mkdir -p $(MKCDIR)/modules
+	mkdir -p $(MKCDIR)/scripts/messages
+	mkdir -p $(MKCDIR)/doc
+	mkdir -p $(MKCDIR)/usr
+	mkdir -p $(MKCDIR)/etc
+	mkdir -p $(MAN8DIR)
+	for i in $(CURDIR)/busybox/busybox $(CURDIR)/busybox/busybox.links ;\
+	    do install -m 755 $$i $(MKCDIR)/busybox ; done
+	install -m 755 $(CURDIR)/busybox/applets/install.sh \
+	    $(MKCDIR)/busybox/applets/install.sh
+	for i in $(CURDIR)/cutstream/cutstream \
+	    $(CURDIR)/pastestream*/pastestream \
+	    $(CURDIR)/mediacheck/checkisomd5 \
+	    $(CURDIR)/mediacheck/implantisomd5 ; do \
+	    install -m 755 $$i $(MKCDIR)/bin ; done
+	for i in $(CURDIR)/contributions/*.sh \
+	    $(CURDIR)/contributions/mkcdrec ; do \
+	    install -m 755 $$i $(MKCDIR)/contributions ; done
+	for i in $(CURDIR)/scripts/messages/* ; do \
+	    install -m 644 $$i $(MKCDIR)/scripts/messages ; done
+	cd $(CURDIR) ; for i in `find scripts -type f` ; do \
+	    install -m 755 $$i $(MKCDIR)/$$i ; done
+	for i in $(CURDIR)/modules/* ; do \
+	    install -m 644 $$i $(MKCDIR)/modules ; done
+	cd $(CURDIR) ; for i in `find etc -type d` ; do \
+	    install -d -m 755 $$i $(MKCDIR)/$$i ; done
+	cd $(CURDIR) ; for i in `find etc -type f` ; do \
+	    install -m 755 $$i $(MKCDIR)/$$i ; done
+	cd $(CURDIR) ; for i in `find usr -type d` ; do \
+	    install -d -m 755 $$i $(MKCDIR)/$$i ; done
+	cd $(CURDIR) ; for i in `find usr -type f` ; do \
+	    install -m 755 $$i $(MKCDIR)/$$i ; done
+	cd $(CURDIR) ; for i in `find . -maxdepth 1 -type f` ; do \
+	    install -m 755 $$i $(MKCDIR)/$$i ; done
+	cd $(CURDIR) ; for i in doc/autorun.inf doc/README doc/CD-Rom.ico ; do \
+	    install -m 644 $$i $(MKCDIR)/$$i ; done
+	install -m 644 $(CURDIR)/doc/mkcdrec.8 $(MAN8DIR)
+	gzip -9f $(MAN8DIR)/*.8
+	$(RM) $(MKCDIR)/{.cvsignore,COPYING,Changelog}
+	$(RM) $(MKCDIR)/*-stamp
+	$(RM) $(MKCDIR)/*/.cvsignore
+	install -m 750 $(CURDIR)/contributions/mkcdrec $(INSTDIR)/usr/sbin
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs Changelog
+	dh_installdocs
+#	dh_installexamples
+	dh_install --sourcedir=debian/tmp
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

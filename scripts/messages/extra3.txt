@@ -1,0 +1,1 @@
+       3 - Enter memory testing (memtest)

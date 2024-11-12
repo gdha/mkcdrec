@@ -1,0 +1,7 @@
+ETC_FILES="$ETC_FILES ppp/pppoe.conf"
+
+BINARIES="$BINARIES adsl-connect adsl-start pppd setsid pppoe logger"
+
+MAN_PAGES="$MAN_PAGES adsl-connect adsl-start pppd setsid pppoe logger"
+
+INITS="$INITS /etc/init.d/pppoe"

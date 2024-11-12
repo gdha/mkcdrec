@@ -1,0 +1,37 @@
+#!/bin/bash
+# ============================================================
+#  This script gets control when Bacula is enabled.  It allows
+#    Bacula to copy its files to the root filesystem and to
+#    add any libraries that are necessary during the make
+#    process.
+#
+#  Some environment variables
+#    BACULA_DIR      the Bacula directory rescue/linux/cdrom/bacula
+#                      This is where all the Bacula files that go into
+#                      memory are put.
+#    ROOTFS          the root filesystem that will be loaded into memory
+#    ISOFS_DIR       the base directory for the ISO (i.e. all this stuff
+#                      will go on the disk but will not automatically be
+#                      loaded into memory.
+# =============================================================
+cwd=`pwd`
+# Pull in environment variables we need
+. ./Config.sh 2>/dev/null
+#
+#
+# Copy files necessary for Bacula to function
+#
+echo " "
+echo "==================================="
+echo "Adding files for Bacula restore ..."
+   cp -dpR ${BACULA_DIR}/ ${ROOTFS}/
+   echo "cp -dpR ${BACULA_DIR}/ ${ROOTFS}/"
+   cd ${BACULA_DIR}
+#  Find libraries needed by Bacula
+   a=`ldd \`find . -perm +111 -a ! -type d -a ! -type l 2> /dev/null | grep -v /dev\` | grep -v linux-gate | \
+            grep "=>" | sort | awk '{print $3}' | grep -v '^dynamic$' | uniq`
+   LIBDIR="${LIBDIR} ${a}"
+   cd ${MKCDREC_DIR}
+   cp -f ${BACULA_DIR}/../custom-rd.img.bz2 ${ISOFS_DIR}/
+echo "==================================="
+echo " "

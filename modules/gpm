@@ -1,0 +1,7 @@
+ETC_FILES="$ETC_FILES sysconfig/mouse sysconfig/gpm gpm-root.conf"
+
+BINARIES="$BINARIES gpm"
+
+MAN_PAGES="$MAN_PAGES gpm"
+
+INITS="$INITS /etc/init.d/gpm"

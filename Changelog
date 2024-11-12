@@ -1,0 +1,1729 @@
+v1.2
+ - added "make silentoldconfig" to busybox build in Makefile.x86[_64];
+   patch from Stefan Seyfried (16/Feb/2011)
+ - applied 0002-use-CFLAGS-for-cutstream.patch and
+   0003-use-CFLAGS-for-pastestream.patch of Stefan Seyfried (16/Feb/2011)
+ - applied patch from Stefan Seyfried on mediacheck sources to make
+   it build on older distro's (16/Feb/2011)
+ - busybox-1.18.2 installed to avoid compilation problems on RHEL4,
+   SLES9 (04/Feb/2011)
+v1.1
+ - rd-base.sh: add mvfs type of filesystem to the SKIP list (vobstores)
+   (gdha, 14/Jan/2011)
+ - busybox: using busybox-1.17.3 to make it work with newer versions
+   of make (gdha, 22/Nov/2010)
+v1.0.0
+ - rd-base.sh: added support for ext4 file systems (gdha, 04/Mar/2010)
+ - rd-base.sh: added support for Xen virtual devices (gdha, 03/Mar/2010)
+ - Config.sh: added ext4 support (gdha, 26/Feb/2010)
+ - initrd.sh: do an umount of stagedir at the start (gdha, 11/Dec/2009)
+ - README: updated date and donation section (gdha, 11/Dec/2009)
+ - updated .config.bb for busybox-1.15.2 (gdha, 11/Dec/2009)
+ - replaced busybox-1.12.0 with 1.15.2 (gdha, 11/Dec/2009)
+ - linuxrc: if ROOT_FS=ext2 then mount new_root as rw (gdha, 07/Sep/2009)
+ - rc.sysinit: corrected type winnnt into winnt (gdha, 07/Sep/2009)
+ - rd-base.sh: add some checks if USBKEY is requested (gdha, 04/Sep/2009)
+ - make_common.sh: added 3 new functions Check_USBKEY_bootable, 
+   Check_USBKEY_FileSystemType and Check_USBKEY_MBR (gdha, 04/Sep/2009)
+ - Config.sh: added SYSLINUXPATH variable (gdha, 04/Sep/2009)
+ - bootflop.sh: correct syslinux -s ${USBKEY_MOUNT} into 
+   ${USBKEY_DEV} in the echo line (gdha, 02/Sep/2009)
+ - bootx86_64.sh: modified to work with syslinux for USB key (gdha,
+ 02/Sep/2009)
+ - messages/*: changed 2008 into 2009 (gdha, 02/Sep/2009)
+ - Makefile.x86_64: USB-KEY rule: changed bootflop.img into boot.img
+   (gdha, 02/Sep/2009)
+ - Config.sh: added some scsi modules to the INITRD_MODULES and SCSI_MODULES
+   to have a wider range of supported HW for cloning purposes (gdha,
+   28/Aug/2009)
+ - Makefile.*: in dist added "--exclude .cvsignore" (gdha, 28/Aug/2009)
+ - Makefile.X86_64: added the USB-KEY feauture to make boot from USB disk
+   possible (gdha, 28/Aug/2009)
+ - Config.sh: move DEVFS variable to section "do not edit below" as it became
+   obsolete, but variable is still used (gdha, 28/Aug/2009)
+ - Makefile.*: Changed VERSION variable to be compliant with rpmlint
+   output (gdha, 18/May/2009)
+ - makeISO9960.in: Checksum not computed for splitted big files; bug
+   SF #2770478 (gdha, 18/May/2009)
+ - linuxrc, linuxrc_pre, rc.sysinit: add fix of SF bug#2727011 (gdha,
+ 09/Apr/2009)
+ - initrd.sh: added get_module ehci-hcd a second time (gdha, 09/Apr/2009)
+ - VERSION: removed the v of v1.0.0 to be compliant with rpmlint (gdha,
+ 13/Mar/2009)
+ - Config.sh: ETC_FILES: added mke2fs.conf file for SF#2392094 (gdha, 05/Jan/2009)
+ - tsm-restore.sh: fix SF bug#2304377 (gdha, 05/Jan/2009)
+ - restore_common.sh: set default blocksize 0 for tape restore (gdha, 12/Dec/2008)
+ - linuxrc/linuxrc_find_and_prep_root: updated the INITRDIMG variable needed
+   for RHEL5 ia64 platform (gdha, 20/Oct/2008)
+ - rd-base.sh: create_parted_script_for_recovery function update for field
+   NAME and FLAGS for the new parted layout for rhel5/ia64 (gdha, 20/Oct/2008)
+ - start-restore.sh: added FSF=0 variable for correcting OBDR to
+   restore an archive to the correct mount point; bug report
+   of Thomas Ries (gdha, 18/Sep/2008)
+ - Config.sh: added ahci to INITRD_MODULES for Dell T3400 Sata as
+   advised by Thomas Ries (gdha, 18/Sep/2008)
+ - Config.sh/initrd.sh: added patch for st driver to be recognized correctly
+   from Thomas Ries (gdha, 18/Sep/2008)
+ - Config.sh: added mount.nfs to BINARIES and made an entry in LINKS as
+   described in topic "Unable to restore from NFS backups" found in the
+   discussion forum "Open Discussion" (gdha, 18/Sep/2008)
+ - Config.sh: MKDIR_LIST: remove / from /usr/lib32 and added var/run/network;
+   in ETC_FILES added default/rcS (gdha, 16/sep/2008)
+v0.9.9
+ - initrd.sh: install linuxrc as init and renamed all linuxrc entries into
+   init (gdha, 03/Sep/2008)
+ - Config.sh: added else statement for Data Protector (gdha, 02/Sep/2008)
+ - initrd.sh: mv linuxrc init instead of hard link - seems to be needed
+   for ubuntu 8.04 (gdha, 02/Sep/2008)
+ - bootx86_64.sh: applied patch SF#2038825 (gdha, 01/Sep/2008)
+ - Config.sh; rd-base.sh; inetd.conf; dp-restore.sh: applied patch from
+   [ 2038532 ] improve support for DataProtector 6.x (gdha, 01/Sep/2008)
+ - initrd.sh: bug SF#2080526 fixed: missing libc6 in debian (gdha,
+   29/Aug/2008)
+ - dispatch.sh: added #!/bin/bash for Ubuntu 8.04 (gdha, 29/Aug/2008)
+ - linuxrc, linuxrc_find_and_prep: updated for rootfs=ramfs (gdha,
+   25/Aug/2008)
+ - rd-base.sh, initrd.sh, bootflop.sh: added support for ROOT_FS being
+   made in initramfs format. Works better on newer distros (gdha, 25/Aug/2008)
+ - .config.bb: unset CONFIG_IFUPDOWN for OpenSuse 10.3 (gdha, 25/Aug/2008)
+ - etc/rc.d/rc.sysinit: changed fi;if clausaule into elif for starting
+   syslog (gdha, 25/Aug/2008)
+ - usr/man/busybox.gz: updated bb man page (gdha, 25/Aug/2008)
+ - test.sh: Test 4: added err=0 at the beginning of the test so test can
+   pass when bothe ROOT_FS and INITRD_FS are ramfs (gdha, 25/Aug/2008)
+ - initrd.sh: removed '-s' from linking linuxrc to init which was 
+   needed to work with switch_root command (gdha, 22/Aug/2008)
+ - Config.sh: added fstab-decode to BINARIES for FC9 (gdha, 22/Aug/2008)
+ - busybox: upgraded to busybox-1.12.0 (gdha, 22/Aug/2008)
+ - bootflop.sh: when using ramfs make ram1 512 bytes bigger then defined
+   to avoid out of space (gdha, 21/Aug/2008)
+ - Config.sh: added udevadm to BINARIES; added 'ramfs' as a method
+   to work with ROOT_FS (2th ramdisk) (gdha, 20/Aug/2008)
+ - rd-base.sh: added test_write to DESTINATION_PATH as advised via
+   SF discussion forum by Olivier Kaloudoff (gdha, 18/Jul/2008)
+ - rd-base.sh" lvm2 routine - fixed SF#1867501 report (gdha, 11/Jul/2008)
+ - makeISO9660.in: added suggestion SF#1996635 to prompt function to avoid
+   accidents when writing CDs (gdha, 11/Jul/2008)
+ - Config.sh: addeed init.d/functions to ETC_FILES (gdha, 09/Jul/2008)
+ - messages/*: update copyright line 2007 to 2008 (gdha, 08/Jul/2008)
+ - Config.sh: if isolinux is not found make ISOLINUX="" (gdha, 01/Jul/2008)
+ - test.sh: put " around ISOLINUX test (gdha, 01/Jul/2008)
+ - linuxrc: add sleep 15 for slow tape drives in case of OBDR (gdha,
+   11/Jun/2008)
+ - initrd.sh: avoid copying (0x00007fff869fe000) alike libs to the
+   ramdisk (Ubuntu Hardy has problems with it) (gdha, 29/May/2008)
+ - rd-base.sh: avoid copying (0x00007fff869fe000) alike libs to the
+   ramdisk (Ubuntu Hardy has problems with it) (gdha, 29/May/2008)
+ - rd-base.sh: Fix problem with SWAPLABEL bug #1938904 (gdha, 29/May/2008)
+ - rd-base.sh: Create parted script procedure - added Model to the exclude
+   list (gdha, 20/May/2008)
+ - Config.sh: added lib32 and usr/lib32 to MKDIR_LIST for Ubuntu Hardy 8.0
+   (gdha, 19/May/2008)
+ - makeISO9660.in: fix typo (gdha, 07/Mar/2008)
+ - Config.sh: CDRECORD entries (cdrecord/wodim) (gdha, 06/Mar/2008)
+ - makeISO9660.in: USBKEY_DEV adaption needed after applying the patch of
+   Christian Werner (gdha, 06/Mar/2008)
+ - rd-base.sh: avoid writing empty USBKEY_DEV file (gdha, 29/Feb/2008)
+ - restore_common.sh: grep dev in To_Restore was not full-proof to find tabs
+   - corrected this (gdha, 27/Feb/2008)
+ - ansictrl.sh: change MY_TYY=`tty` into  MY_TTY=`tty | awk '{print $1}'`
+   to work properly on SLES10 (gdha, 27/Feb/2008)
+ - Config.sh: add var/lib/empty and var/lib/dhcp for SLES10 to MKDIR_LIST
+   (gdha, 27/Feb/2008)
+ - major patch integration offered by Christian Werner to add USB disk
+   booting support to mkCDrec (27/Feb/2008)
+ - Makefile.x86: if contruct for clean part. It now checks if the file
+   /etc/mkcdrec.conf exists (gdha, 13/Feb/2008)
+ - rd-base.sh: touch var/log/lastlog for SLES10 (gdha, 06/Dec/2007)
+ - Config.sh: adding piix to INITRD_MODULES list for SuSe (gdha, 06/Dec/2007)
+v0.9.8
+ - all scripts: changed #!/bin/sh into #!/bin/bash (gdha, 13/Nov/2007)
+ - Config.sh: added security/console.perms.d/* to ETC_FILES (gdha, 08/Nov/2007)
+ - rd-base.sh: major code 252 can be EVMS or LVM - bug #1810139 (gdha,
+   07/Nov/2007)
+ - restore_common.sh: added an extra nfs mount test (bug #1759406)
+ - linuxrc: added support for ramfs booting (gdha, 05/Nov/2007)
+ - etc/rc.d/rc.sysinit: changes needed to work with ramfs (gdha, 05/Nov/2007)
+ - bootflop.sh: added section for ramfs (gdha, 05/Nov/2007)
+ - initrd.sh: added section for ramfs (gdha, 05/Nov/2007)
+ - Config.sh: comment out the soflinks to /initrd/lib in LINKS section
+ - .config.bb: updated .config file for busybox 1.7.2 (gdha, 05/Nov/2007)
+ - busybox upgrade to v1.7.2 (gdha, 25/Oct/2007)
+ - Config.sh: add nls_utf8 to INITRD_MODULES to avoid error during loading the
+   init ramfs "unable to load NLS charset utf8" (gdha, 25/Oct/2007)
+ - Config.sh: add usr/libexec/openssh to MKDIR_LIST (gdha, 25/Oct/2007)
+ - Config.sh: added ata_piix ata_generic libata to INITRD_MODULES needed
+   for FedoraCore 7 and RAMFS initrd (gdha, 18/Oct/2007)
+ - Config.sh: added logger to BINARIES; added /lib/lsb to MKDIR_LIST
+ - bootflop.sh: added code needed for RAMFS support (gdha, 15/Sep/2007)
+ - initrd.sh: added code needed for RAMFS support (gdha, 15/Sep/2007)
+ - test.sh: added RAMFS filesystem check (gdha, 15/Sep/2007)
+ - rd-base.sh: cp /lib/lsb/init-functions if found (gdha, 03/Sep/2007)
+ - Config.sh: added lib/lsb to MKDIR list (gdha, 03/Sep/2007)
+ - Config.sh: added logger to the BINARIES (gdha, 03/Sep/2007)
+ - .config.bb: comment logger and ipcalc (gdha, 03/Sep/2007)
+v0.9.7
+ - Config.sh: To avoid problem "Unknown escape sequence in input: 33, 133"
+   added GROFF_NO_SGR=1 ; export GROFF_NO_SGR (gdha, 10/Jun/2007)
+ - doc/autorun.inf and CD-ROM.ico: the icon was missing (gdha, 10/Jun/2007)
+ - Makefile.*: add 'install' to make of busybox - needed so it produces the
+   busybox.links file needed for linking the commands to busybox with rpm
+   builds (gdha, 10/Jun/2007)
+ - Config.sh: updated MKDIR_LIST (gdha, 10/Jun/2007)
+ - Config.sh: added mknod to binaries + disble in .config.bb (gdha,
+ 18/May/2007)
+ - rd-base.sh: added major nr. 106 to list of cciss (gdha, 18/May/2007)
+ - rd-base.sh: some mods for busybox needed (gdha, 16/May/2007)
+ - upgrade busybox from v1.1.1 to v1.4.2 (gdha, 16/May/2007)
+ - initrd.sh: make sure /lib/i686 gets created (gdha, 16/May/2007)
+ - start-restore.sh: added to g to sed -e 's/%137/_/' for EVMS 
+   (gdha, 01/May/2007)
+ - restore_common.sh: added to g to sed -e 's/%137/_/' for EVMS 
+   (gdha, 01/May/2007)
+ - make_common.sh: added to g to sed -e 's/%137/_/' for EVMS (gdha, 01/May/2007)
+ - rd-base.sh: added to g to sed -e 's/%137/_/' for EVMS (gdha, 01/May/2007)
+ - Config.sh: added /usr/lib and /usr/libexec/openssh to PATH (gdha, 18/Mar/07)
+ - modules/ssh and modules/networking added for Debian 3.x (gdha, 18/Mar/2007)
+ - initrd.sh: added missing minix file system for INITRD as reported by
+   tomdenecke (gdha, 24/Jan/2007)
+v0.9.6
+ - rd-base.sh: /etc/rc.d/rc.local build-up if it already exists
+ - etc/rc.d/flavors/rc.vanilla: extra cdrom mount check (gdha, 14/Jan/2007)
+ - Config.sh: KERNEL_APPEND="ramdisk_blocksize=1024" necessary for FC6
+   (gdha, 14/Jan/2007)
+ - cutstream.c: get it right this time (gdha,14/Jan/2007)
+ - doc/: removed the old web pages - obsolete (gdha, 14/Dec/2006)
+ - restore-fs.sh: LOCALFS mismatch with LOCALFSTMP variable for the routine
+   Get_backup_back (gdha, 04/Dec/2006)
+ - cutstream.c: revert the changes of 5/Oct/2006 as they were causing "only 0 bytes read at relative offset -1208438976" error (gdha, 04/Dec/2006)
+v0.9.5
+ - initrd.sh: added /lib/tls/i686/cmov clausule for Ubuntu 6 (gdha, 09/Nov/2006)
+ - makeISO9660.in: for ia64 fixed a bug concerning the boot.img. It was
+   using the bootflop.img resulting in failures (gdha, 09/Nov/2006)
+ - rd-base.sh: fix bug SF#588523 for ssh libs (gdha, 04/Nov/2006)
+ - rd-base.sh: List_loadable_modules: only copy fmod if found (gdha, 01/Nov/2006)
+ - makeISO9660.in: blank_cdr: check if empty drive (gdha, 01/Nov/2006)
+ - makeISO9660.in: blank_cdr: added the if-else clausule for blanking
+   CD-RW/DVD-RW (gdha, 19/Oct/2006)
+ - mkmakeISO9660.sh: added MAXCDSIZE variable in the list (gdha, 19/Oct/2006)
+ - ansictrl.sh: askyn: added missing ] character (gdha, 17/Oct/2006)
+ - restore_common.sh: added 2>/dev/null to sfdisk to avoid wanrning
+   message in ia64 architecture (gdha, 18/Oct/2006)
+ - rd-base.sh: ida_disk_types: added ia64-parted clausule (gdha, 17/Oct/2006)
+ - rd-base.sh: included fix for add_to_cdrom - sf#1578684 (gdha, 17/Oct/2006)
+ - initrd.sh: several fixes for lib64 for x86_64 architecture - sf#1577701
+ - rd-base.sh: edit the copy of Config.sh with ed which is used during
+   the restore phase - comment out some unused variables - sf#1577697
+ - rd-base.sh: added code ONLY_INCLUDE_LISTED_FS which explicit backup
+   only the file systems listed in INCLUDE_FS_LIST (gdha, 15/Oct/2006)
+ - .config.bb: unset the IFUPDOWN variables as on RHEL we get errors when
+   enabling the network /etc/network/interfaces no such file (gdha, 15/Oct/2006)
+ - Config.sh: - set default value BACULA_RESTORE="n" instead of "y"
+	- new variables added: ONLY_INCLUDE_LISTED_FS and INCLUDE_FS_LIST
+	- added to NETWORK_MODULES "tg3" and "tulip" (gdha, 15/Oct/2006)
+ - test.sh: on x86_64 arch check for isolinux (gdha, 09/Oct/2006)
+ - cutstream.c: made the count variables type long (gdha, 05/Oct/2006)
+ - makeISO9660.in: removed the dotting of Config.sh as it broke the
+   creation of multiple CD-ROMs (gdha, 05/Oct/2006)
+ - Config.sh: build test around make_common.sh - patch suggested by
+   Thomas Denecke (gdha, 21/Sep/2006)
+ - Config.sh: c_light=${c_norm}: added missing { (gdha, 12/Sep/2006)
+v0.9.4
+ - rd-base.sh: add_to_cdrom: changed path to location (gdha, 10/Sep/2006)
+ - add_to_cdrom: new script to add additional directories to the rescue CD.
+   E.g. to use the normal distro binaries instead of BusyBos. Script was
+   prepared by Kern Sibbald (03/Sep/2006)
+ - make_bacula: new script to include bacula software to restore. Script was
+   made by Kern Sibbald (03/Sep/2006)
+ - rd-base.sh: remove the Make_Bacula routine and replace it with external
+   script make_bacula - patch from Kern Sibbald (03/Sep/2006)
+ - etc/rc.d/rc.sysinit: fix bug for syslogd - patch from Kern Sibbald (03/Sep/2006)
+ - linuxrc_find_and_prep_root: load custom-rd.img.bz2 when available on
+   CD-ROM - patch from Kern Sibbald (03/Sep/2006)
+ - rd-base: function Check_for_sshd - quotes ${SSHD_CONFIG} (30/Aug/2006)
+ - Config.sh: some udev related executables were missing for SuSe 10,
+   patch made by T. Denecke (19/Aug/2006)
+ - etc/rc.d/rc.sysinit: patch for SuSe and uDev by T. Denecke (19/Aug/2006)
+ - linuxrc_pre: for SuSe make sure /dev/sr* is checked for CD-ROM device,
+   patch made by T. Denecke (19/Aug/2006)
+ - usr/bin/makedev: add the creation of /dev/sr0 and /sev/sr1 for SuSe
+   and foresee links to scd0/1 (patch of T. Denecke, gdha, 19/Aug/2006)
+ - makeISO9660.in: fix bug that for DVD writing CDrec.iso tests happened
+ - rd-base.sh: add a loop to mknod /dev/md devices in mdadm-create.sh instead
+   of using makedevs (not generic enough) (gdha, 15/Aug/2006)
+ - Config.sh: added kernel_minor_nr variable (gdha, 15/Aug/2006)
+ - rd-base.sh: added support for drbd devices (Linux HA cluster) (gdha, 15/Aug)
+ - initrd.sh: copy /etc/udev stuff (fix from Joshua Radke, 15/Aug/2006)
+ - make_common.sh: ParseDisk: small fix from SF#1537363 (gdha, 15/Aug/2006)
+ - rd-base.sh: improve the mdadm.conf analysis routines (gdha, 10/Aug/2006)
+ - removed webmin directory from mkcdrec tree as it is a separate package
+   now available at Sourceforge file section (10/Aug/2006)
+ - Config.sh: new options concerning less verbosity and deny colors - all
+   modifications were done by Kern Sibbald - July 2006
+ - ansictrl.sh: modifications for color management by Kern Sibbald - July 2006
+ - bootflop.sh: modifications for logging verbosity by Kern Sibbald
+ - clone-dsk.sh: modifications for logging verbosity by Kern Sibbald
+ - initrd.sh: modifications for logging verbosity by Kern Sibbald
+ - makeISO9660.in: modifications for logging verbosity by Kern Sibbald
+ - make_common.sh: modifications for logging verbosity by Kern Sibbald
+ - rd-base.sh: modifications for logging verbosity by Kern Sibbald
+ - restore-fs.sh: modifications for logging verbosity by Kern Sibbald
+ - restore_common.sh: modifications for logging verbosity by Kern Sibbald
+ - start-restore.sh: modifications for logging verbosity by Kern Sibbald
+ - new scripts: format_drives.sh mount_drives.sh partition_drives.sh restore_boot_loader.sh unmount_drives.sh (by Kern Sibbald, July 2006)
+ - rd-base.sh: ifslaves 'bond0' was wrong, must be '$if' (thanks to Schlomo,
+   10/Jul/2006) 
+v0.9.3
+ - .config.bb: disable CONFIG_CHATTR and CONFIG_LASTTR (otherwise busybox
+   won't compile on ia64) (gdha, 25/Jun/2006)
+ - makeISO9660.in: commented do_cleanup as it overwrote the do_cleanup
+   defintion in tar-it.sh (gdha, 15/Jun/2006)
+ - added new code donated by Schlomo Schapiro to support the recovery with
+   Legato Networker. Changes were made into Config.sh, rd-base.sh and a new
+   script saved in contributions/nsr-restore.sh (gdha, 14/Jun/2006)
+ - tsm/dp-restore.sh: added CreateMinimalDev routine to avoid empty /dev
+   after restore with DP or TSM which results into panic (gdha, 07/Jun/2006)
+ - restore_common.sh: added CreateMinimalDev routine (gdha, 07/Jun/2006)
+ - rd-base.sh: lvm1: added a missing ${VG} variable - fix provided by
+   Alois Gritsch (06/Jun/2006)
+ - Makefile.*: clean: remove explicit CDrec.iso instead of *.iso (gdha,
+	28/May/2006)
+ - test.sh: test 21: improved selinux test (gdha, 28/May/2006)
+ - .config.bb: disable SELINUX (gdha, 16/May/2006)
+ - rd-base.sh: make snapshot of ifconfig output to ifconfig.txt (gdha,
+   11/May/2006)
+v0.9.2
+ - rd-base.sh: for x86_64 copy the correct ld-linux-x86-64.so.2 library to
+   the rd-base ramdisk. This fixes the broken boot process on x86_64 arch
+   as reported by many people (gdha, 01/May/2006)
+ - initrd.sh: added udevstart to list of binaries (gdha, 01/May/2006)
+ - replaced busybox-1.1.0 with busybox-1.1.1 (gdha, 01/May/2006)
+ - rd-base.sh: added hack with sed for STRIPES, STRSIZE (gdha, 28/Apr/2006)
+ - restore_common.sh: # SF#1474035 - mount point does not exist
+   added  mkdir -p ${LOCALFS}${Fs} >/dev/null (gdha, 27/Apr/2006)
+ - usr/bin/makedev: added creation of null device (gdha, 2/Apr/2006)
+v0.9.1
+ - Config.sh: updated the TSM_FILES list (gdha, 26/Mar/2006)
+ - .config.bb: busybox-1.1.0 config file updates to exclude chattr, lsattr
+   and ifup/ifdown (gdha, 26/Mar/2006)
+ - makeISO9660.in: added autorun.inf file (gdha, 26/Mar/2006)
+ - mkmakeISO9660.sh: check /etc/mkcdrec.conf file before Config.sh to
+   substitute variables makeISO9660.in (gdha, 22/Mar/2006)
+ - rd-base.sh: BB-1.1.x requires a 2th parameter (--symlinks|--hardlinks)
+   Otherwise you will get the "chroot not found error" (gdha, 22/Mar/2006)
+ - make_common.sh: ParseDisk: fix bug in expression DEVwP. Bug was reported
+   by Patrice Petit (gdha, 18/Mar/2006)
+ - Config.sh: added /tmp/CDrec* in EXCLUDE list (gdha,12/Mar/2006)
+ - rd-base.sh: added function Check_for_swaplabel (gdha, 08/Mar/2006)
+ - restore-fs.sh: if partition has a label, label it too (gdha, 03/Mar/2006)
+v0.9
+ - rc.sysinit: some changes for udev needed by SuSe (gdha, 11/Feb/2006)
+ - busybox: changed from v1.0.1 to v1.1.0 (gdha, 09/Feb/2005)
+ - rd-base.sh: /dev/emcpowera should now be recognised as a valid SCSI
+   device (gdha, 05/Feb/2006)
+ - rd-base.sh: added '--force' to sfdisk - patch of peterholik (05/Feb/2006)
+ - initrd.sh: removed i-nodes nr. with mke2fs of ram0 (gdha, 29/Jan/2006)
+ - restore_common.sh: make modprobe nfs quiet (gdha, 25/Jan/2006)
+ - tar-it.sh: do_cleanup before exiting (gdha, 24/Jan/2006)
+ - rd-base.sh: added egrep "^[^#]" to exclude commented lines from /etc/fstab
+   file while building mkdirs.sh - fix by torsten (21/Jan/2006)
+ - contributions/mkcdrec.mk_pxe_rootfs: an alternative script for prepPXE.sh
+   made by Sébastien Aperghis-Tramoni
+ - rd-base.sh: lvm2: STRIPE/STRSIZE fix for FC4 and added a missing space
+   before a ] sign (gdha, 08/Jan/2006)
+ - etc/rc.d/rc.sysinit: added if-clausule for udev at the end again to
+   catch newly created devices (gdha, 07/Jan/2006) 
+ - rd-base.sh: buildLVM.sh script - test if partitions.md is an empty file;
+   use mkmdnod script to create /dev/mapper devices (gdha, 05/Jan/2006)
+ - usr/bin/mkmdnod: change exit 1 into exit 0 - want to use this script by
+   the buildLVM.sh script (made automatically) (gdha, 05/Jan/2006)
+ - Config.sh: added var/lib/nfs to MKDIR_LIST for NFS mounting (gdha,
+ 31/Dec/2006)
+ - make_common.sh: Find_Linux_kernel: ls /boot/vm*${Kernel_Version} - added
+   vm in front of Kernel_Version (gdha, 29/Dec/2005)
+ - Config.sh: added ethtool to the BINARIES (gdha, 17/Dec/2005)
+ - rd-base.sh: applied lvm2-stripe patch from Daniele Arduini (17/Dec/2005)
+ - etc/passwd: only mkcdrec remains in the passwd file. This passwd gets
+   appended with the /etc/passwd file (gdha, 12/Dec/2005)
+ - etc/group: removed as we copy the one from the local OS (gdha, 12/Dec/2005)
+ - rd-base.sh: lvm2: vgcreate.sh was scrample because  we missed some VGs
+   fixed by Daniele Arduini - see SF [ 1344636 ] vgcreate.sh error
+ - linuxrd_pre: add elif clausule for IA64 so it could boot via the EFI
+   vfat partition too as an alternative for a CD-ROM (gdha, 29/Nov/2005)
+ - initrd.sh: add link for /lib/tls -> /lib if needed (gdha, 26/Nov/2005)
+v0.8.9
+ - doc/mkcdrec.8: update manpage for usage of mkcdrec (gdha, 22/Nov/2005)
+ - contributions/mkcdrec: mkcdrec wrapper script which replaces the use of
+   the 'make' command (gdha, 22/Nov/2005)
+ - rc.sysinit/makedev/initrd.sh/rd-base.sh: apply SF#1334203 - copy the 
+   correct libnss_files.so.2 for x86_64, making MAKEDEV uniform for RH,
+   SuSe (gdha, 9/Nov/2005)
+ - restore_common.sh: restore_split_file: added "cd /etc/recovery" just before
+   sh ask.for.cd.sh. An improvement of Anne-Marie.Wunderlin from Bull.com
+   (gdha, 5/Nov/2005)
+ - tar-it.sh: with SCSI tapes set the default blocksize to 0 - an improvement
+   provided by Anne-Marie.Wunderlin of Bull.com (gdha, 5/Nov/2005)
+ - test.sh: Test 10: partly rewrote the finding CD-R(W) proc. (gdha, 5/Nov/2005)
+ - initrd.sh: added missing scd[0-1] devices and foreseen a soflink to
+   sr[0-1] too. Necessary for Blades it seems (gdha, 4/Nov/2005)
+ - rd-base.sh: add SATA modules to the modprobe.sh script (gdha, 1/Nov/2005)
+ - mkcdrec2.spec: some modifications for x86_64 (gdha, 30/Oct/2005)
+ - bootx86_64.sh: do_cleanup: remove bootflop as unused (gdha, 30/Oct/2005)
+ - tar-it.sh: patch for EXCLUDE_LIST (SF#1336492) by Xavier Levrat
+ - test.sh: added test 21 for checking SELinux non-enforcing mode, because
+   other tar has problems with extended attributes (gdha, 26/Oct/2005)
+ - tar-it.sh: add actions for Disable_SELinux_during_backup (gdha, 26/Oct/05)
+ - Config.sh: added new variable Disable_SELinux_during_backup (gdha, 26/Oct/05)
+ - tar-it.sh: do_cleanup: remove temp files in /tmp (gdha, 12/Oct/2005)
+ - initrd.sh: copy insmod.modutils for Debian 3.1 with 2.4 kernels - see also
+   SF#1309823 (gdha, 10/Oct/2005)
+ - rd-base.sh: copy for Debian 3.1 the old modutils (gdha, 10/Oct/2005)
+ - rd-change.sh: apply patch from SF#1297913 - patch for lvm and Udev
+ - make_common.sh: patch for hosts with SMART-Array Controller SF#1292090
+ - rd-base.sh: SF#1273936 - PE_Size doesn't break on 32.0M or 32,00M -
+   vgcreate command will now work on SuSe and RH (gdha, 28/Sep/2005)
+ - rd-base.sh: SF#1291735 - md_mod can also be md-mod (gdha, 28/Sep/2005)
+ - rd-base.sh: SF#1306120 - modprobe st to modprobe.sh (gdha, 28/Sep/2005)
+ - rd-base.sh: forced a copy of ld-linux-ia64.so.2 (gdha, 28/Sep/2005)
+ - etc/fstab: added /dev/pts line needed for ssh connection on some Linux
+   system - cannot hurt (gdha, 17/Sep/2005)
+ - rd-base.sh: use /tmp/modprobe.sh to sort on to avoid empty modprobe.sh
+   script which results in disk modules not be loaded automatically.
+   Patch from Geoff Steer (14/Sep/2005)
+ - webmin/README.webmin: new file from Tony of Macfarlands.com (13/Sep/2005)
+v0.8.8
+ - packaging/makerpms.sh: added sparc (aurora) support (gdha, 10/Sep/2005)
+ - Makefile.sparc: added build rule for rpm (gdha, 10/Sep/2005)
+ - contributions/mkcdrec: new user friendly script acting as a wrapper around
+   the make process of mkCDrec. Initial script provided by docsonic. Made
+   some modifications (gdha, 10/Sep/2005)
+ - Makefile: changed the "install" rule (gdha, 10/Sep/2005)
+ - makerpms.sh: add FC4 to the supported list (gdha, 5/Sep/2005)
+ - make_common.sh: added CAPACITY for SDLT tapes (gdha, 3/Sep/2005)
+ - makedev: script to create on the fly lots of devices as uDev seems to
+   loose plenty of essential devices in FC4 (gdha, 3/Sep/2005)
+ - rc.sysinit: add makedev code for uDev amd FC4 (gdha, 3/Sep/2005)
+ - initrd.sh: added "get_module ohci-hcd" for Debian as suggested by
+   lizard via SG bug report 1273941, 27/Aug/2005
+ - rd-base.sh: Copy_etc: cp modprobe.conf to rootfs/lib/modules (as suggested
+   by lizard via SF bug report 1273933, 27/Aug/2005)
+ - test.sh: test 19: corrected the ADD_PERL test (gdha, 20/Aug/2005) 
+ - rd-base.sh: added code to comment out the HWADDR in any ifcfg-eth* file(s)
+   under rootfs/etc/sysconfig/network-scripts (gdha, 20/Aug/2005)
+ - replaced busybox-1.00 with busybox-1.01 (gdha, 19/Aug/2005)
+ - Makefile.sparc: clean it up a bit (gdha, 19/Aug/2005)
+ - Config.sh/test.sh: added variable for MAKEDEV + test it (gdha, 19/Aug/2005)
+ - rd-base.sh: add /lib/libnss_files.so.2 to list of libraries to copy
+   into ramdisk. Prefer to have a copy in ramdisk instead of linking into
+   /initrd. We need it for doing a proper chroot and MAKEDEV in FC4
+ - Config.sh: removed libnss_files.so.2 in LINKS (gdha, 15/Aug/2005)
+ - rd-base.sh: force lib copy of ld-linux.so.2, EVMS and clamav
+ - busybox/archiving/gzip.c: line 1623: insert const for gcc v4
+ - busybox/networking/inetd.c: line 563: remove (type) from SWAP definition
+ - Config.sh: removed in LINKS ld-linux.so.2 and mdadm (gdha, 13/Aug/2005)
+ - makeISO9660.in: changed SPARC mkisofs parameters (gdha, 07/Aug/2005)
+ - Config.sh: remove softlink of parted to /cdrom/utilities/parted as parted
+   is now part of the BINARIES list (gdha, 22/Jul/2005)
+ - linuxrc_pre: replace ' on line 50 by " (SF#1233172) (gdha, 22/Jul/2005)
+ - initrd.sh: apply patch SF#1238823 - SATA modules (gdha, 22/Jul/2005)
+ - clone-dsk.sh/restore_common.sh: apply patch of SF#1238918 (gdha, 22/Jul/2005)
+ - initrd.sh: added ld-linux-ia64.so.2 as ash needs it, otherwise linuxrc
+   did not execute.
+   I got the error like the person who recently asked a question (2005-06-01)
+   on your mailing list.
+   "VFS: Cannot open root device "<NULL>" or unknown-block(8,2) Please append
+   a correct "root=" boot option Kernel panic - not syncing: VFS: Unable to 
+   mount root fs on unknown-block(8,2)" Anne Marie Wunderlin (17/Jun/2005)
+- makeISO9660.in: added VOLID to the mkisofs command. When I got the
+  "No mkCDrec label found..." error, I made this change but I also upgraded 
+   to Version 8-7 at the same time.  I suppose that the change to 
+   makeISO9660.in fixed the error.  Anne Marie Wunderlin (17/Jun/2005)
+ - restore_common.sh: for ELILO bootloader, the restore appears to work OK.
+   So I changed the script to not display "ELILO bootloader not supported".
+   Anne Marie Wunderlin (17/Jun/2005)
+ - mediacheck/checkisomd5.c and implantisomd5.c: to avoid loops added the
+   code suggested in http://sourceforge.net/tracker/?func=detail&atid=\
+   383782&aid=1212019&group_id=25327 (gdha, 17/Jun/2005)
+ - restore-fs.sh: fixed 3 little bugs as described
+   in http://sourceforge.net/tracker/index.php?func=detail&aid=1216278&\
+   group_id=25327&atid=383782 (gdha, 17/Jun/2005)
+v0.8.7
+ - initrd.sh: get_module: fix $? if statement - logics became invalid after
+   last patch add-on (gdha, 29/May/2005)
+ - rd-base.sh: enable Kernel_Version variable again (gdha, 22/May/2005)
+ - test.sh: add explicit test for /usr/bin/which itself (gdha, 22/May/2005)
+ - rd-base.sh: changed the PE_Size variable in lvm1 and lvm2 routine to return
+   the correct values that vgcreate accepts (gdha, 21/May/2005)
+ - test.sh: test 19: check estimated disk space of perl. if it exceeds 28500 Kb
+   give warning with options (gdha, 17/May/2005)
+ - test.sh: do not check for gcc for rpm version of mkcdrec where busybox
+   is already prebuild (gdha, 17/May/2005)
+ - tar-it.sh: reset the screen in interactive mode (gdha, 17/May/2005)
+ - linuxrc_pre: check the SCSI tape devices first in order that devices served
+   by the ide-scsi are checked first (gdha, 17/May/2005)
+ - initrd.sh: if minor nr of kernel is 5 or higher do not try to load the
+   ide-scsi module (gdha, 17/May/2005)
+ - Config.sh: Kernel_version and kernel_minor_nr are now moved to this script
+   which makes them available to all others scripts too (gdha, 17/May/2005)
+ - rd-base.sh: minor bug fixes after DRP of LVM2 based system by lizardnet
+   (gdha, 17/May/2005)
+ - rc.vanilla: fixed the AUTODR procedure (gdha, 10/May/2005)
+ - rd-base.sh: replaced 'cat /proc/sys/kernel/hostname' by 'uname -n' which
+   is the official way of finding the hostname (gdha, 09/May/2005)
+ - tsm-restore.sh: some minor changes by Schlomo Schapiro (09/May/2005)
+ - makeISO9660.in: protect CDrec.iso with chmod 600 (gdha, 08/May/2005)
+ - tsm-restore.sh: fix TsmServer variable by Stephan Hendl (gdha, 08/May/2005)
+ - rd-base.sh: for debian LVM: rsync the links and lvm exe (gdha, 08/May/2005)
+ - linuxrc/linuxrc_pre: added OR statements for mount for Knoppix/Debian/Mythtv
+ - dp-restore.sh: fix last if statement of ia64 (gdha, 06/May/2005)
+ - initrd.sh: added module nls_cp437 (gdha, 06/May/2005)
+ - rd-base.sh/Config.sh: add Perl support (gdha, 06/May/2005)
+ - Config.sh: added mdadm to MAN_PAGES (gdha, 21/Apr/2005)
+ - rd-base.sh: added debug patch for mdadm support by Peter Bartfai
+ - rd-base.sh: added support for mdadm type of Software Raid (gdha, 17/Apr/05)
+ - make_common.sh: Find_Linux_kernel and Debian didn't returned the result
+   we expected. Made it better (gdha, 16/Apr/2005)
+ - make_common.sh: Find_Linux_kernel + grub + cciss devices resulted into
+   errors. Fixing this with new routine 'Find_Root_Partition' (gdha, 13/Apr/05)
+ - initrd.sh: included the removed get_modules again for compatability
+   reasons with older kernels (2.4.x) (gdha, 11/Apr/2005)
+ - initrd.sh: added "get_module jbd" back for IA64; the modprobe version
+   is too old (gdha, 10/Apr/2005)
+ - test.sh: changed some tests for isolinux/syslinux (gdha, 10/Apr/2005)
+ - messages/ edited the different text files for the new behaviour; added
+   default isolinux text messages according AUTODR value (gdha, 10/Apr/2005)
+ - bootflop.sh: made isolinux default way of booting instead of using sys-
+   linux. Before, isolinux was only used when mkcdrec_utilities were instal-
+   led. (gdha, 10/Apr/2005)
+ - Config.sh: new option: FORCE_SYSLINUX: make it true if you want explicit
+   to use syslinux (for older installation) (gdha, 10/Apr/2005)
+v0.8.6
+ - initrd.sh: for IA64 (and maybe older distro's) the modprobe command does
+   not understand --show-depends option (gdha, 28/Mar/2005)
+ - tsm-restore.sh: fixes for nicer output by Schlomo (21/Mar/2005)
+ - restore_common.sh: star: fix a small bug for nicer output (Schlomo, 21/Mar/05)
+ - initrd.sh: applied patch for get_module (SF #1124748, gdha, 21/Mar/2005)
+ - restore-fs.sh: add echo "echo \"y\" in from of mkfs command (gdha, 21/Mar/05)
+ - Config.sh: added ide-* modules to OTHER_MODULES, added "lsof" to list of
+   BINARIES, added "hostname" to ETC_FILES (gdha, 21/Mar/2005)
+ - clone-dsk.sh: pipe echo "y" into mkfs part (gdha, 21/Mar/2005)
+ - rd-base.sh: List_loadable_modules: EXCLUDE_SCSI_MODULES removes modules again
+ - Config.sh: added option EXCLUDE_SCSI_MODULES to give users the possibility to remove
+   certain SCSI modules from CD to avoid erasing e.g. SAN based disks (gdha, 19/Mar/05)
+ - rd-base.sh: CheckBootLoader: rewrote UNKOWN bootloader part (gdha, 19/Mar/05)
+ - restore_common.sh: Improved MountLocalFileSystems routine (gdha, 19/Mar/05)
+ - tsm-restore.sh: removed all common functions and replaced with subroutines
+   in order to avoid duplicated code (gdha, 17/Mar/2005)
+ - dp-restore.sh: removed all common functions and replaced with subroutines
+   in order to avoid duplicated code (gdha, 17/Mar/2005)
+ - rd-base.sh: mark DP/TSM Backup_made_with_DP/TSM in /etc/recovery when
+   a backup was made with an external program DP/TSM (gdha, 17/Mar/2005)
+ - start-restore.sh: moved most logical blocks of program code to the
+   restore_common.sh script as functions Step3-9 (gdha, 16/Mar/2005)
+   ==> reason - to make it easier to share common code across different
+   scripts (start-restore.sh, clone-dsk.sh, dp/tsm-restore.sh)
+ - makeISO9660.in: added a simple hostname_uname-r identification on each
+   CD-ROM to tie multiple CDs easier (gdha, 07/Mar/2005)
+ - rd-base.sh: DESTINATION_PATH=host:/mount_point will be accepted too
+   We will try to mount it for you (gdha, 07/Mar/2005)
+ - rd-base.sh: Check_Bootloader: use /proc/partitions to find bootloader 
+   instead of only physical disks (gdha, 07/Mar/2005)
+ - Config.sh: added 2 additional TSM files (gdha, 07/Mar/2005)
+ - restore_common.sh: Step2: foreseen a /nfs structure to mount NFS
+   shares onto to avoid conflicts (gdha, 05/Mar/2005)
+ - rd-base.sh: restore NFS mountpoints under /nfs (gdha, 05/Mar/2005)
+ - restore_mbr: restore the MBR in its whole or partial (gdha, 05/Mar/2005)
+ - rd-base.sh: make a safety backup of /boot/efi (ia64) on CD (gdha, 22/Feb/05)
+ - Config.sh: added fsbrda to list of DP binaries (gdha, 22/Feb/2005)
+ - linuxrc_find_and_prep_root: fix ia64/EFI missing /boot/efi partition -
+   must find & mount CD-ROM (gdha, 21/Feb/2005)
+ - rd-base.sh: Check_for_sshd: add sftp-server support (gdha, 16/Feb/2005)
+ - Config.sh: added efibootmgr for IA64 to BINARIES (gdha, 16/Feb/2005)
+ - Config.sh: added screen for having multiple windows with a serial console
+   such as for IA64 GSP console (gdha, 16/Feb/2005)
+ - rd-base.sh: fix for mkcdrec-Bugs-1111131 (missing raidtab) gdha, 12/Feb/2005
+ - dp-restore.sh: add new restore script for HP Data Protector into
+   contributions (gdha, 12/Feb/205)
+ - rd-base.sh: vg/lvcreate.sh sort to temp file to avoid getting empty
+   script; then mv to vg/lvcreate.sh again (gdha, 28/Jan/05)
+ - usr/bin/mkmdnod: last line 'ls -l /dev/mapper' should have been
+   'ls -l /dev/mapper/control' (gdha, 26/Jan/05)
+ - etc/rc.d/rc.sysinit: at the end rerun rc.udev.boot (gdha, 26/Jan/05)
+v0.8.5
+ - test.sh: test 17: change "<" into "-F" to query speed of ttyS0, which
+   is required for IA64 (gdha, 26/Jan/05)
+ - busybox: cvs update of gzip.c,cp.c,usage.h,loop.c and insmod.c (23/Jan/05)
+ - etc/group: add group uucp (for ttyS0) (gdha, 23/Jan/05)
+ - initrd.sh: add /dev/ttyS0 to list of devs. (gdha, 23/Jan/05)
+ - mknodnod: script to check or recreate /dev/mapper/control character
+   device; useful for LVM2 (gdha, 23/Jan/05)
+ - initrdh.sh/rd-base.sh: apply patch from Benjamin Drieu [SF # 1105127 ] 
+   Don't fail if no module support is needed for Kernel (gdha, 22/Jan/05)
+ - dispatch.sh: add architecture check (gdha, 19/Jan/05)
+ - make_common.sh: GetBootArch function to return barch (gdha, 19/Jan/05)
+ - test.sh: test 18: replace case by GetBootArch routine (gdha, 19/Jan/05)
+ - initrd.sh: build case loop for architecture dependent libraries needed;
+   fix broken if block; add links for x86_64; avoid loading fiber channel
+   drivers (as no CD-drive will over be there) (gdha, 16/Jan/05)
+ - bootflop.sh: fix if test bug; write warning to log when no kernel was found;
+   remove bootflop.img when it is too small (unable anyway) (gdha, 16/Jan/05)
+ - makeISO9660.in: add new block for x86_64; in ia64 block change the word ia64
+   by $BOOTARCH (gdha, 16/Jan/05)
+ - rd-base.sh: avoid backing up removable media (e.g. USB stick);
+   trim duplicate LVM code; add support for x86_64; make sure special drivers
+   are listed in modprobe.sh script (gdha, 16/Jan/05)
+ - bootx86_64.sh: make bootable CD for arch x86_64 [new] (gdha, 15/Jan/05)
+ - bootflop.sh: Is devfsd running? forgot x before 1 (gdha, 14/Jan/05)
+v0.8.4
+ - rd-base.sh: correct some lvm2 stuff (gdha, 04/Jan/05)
+ - ansictrl.sh: change CTRL-D into CTRL-C (gdha, 04/Jan/05)
+***** Good Documentation Practices: use clear date labels ******
+ - initrd.sh: udev/lvm2 code cleanup (gdha, 31/12/2004)
+ - .config.bb: disable CONFIG_SYSCTL (gdha, 30/12/2004)
+ - initrd.sh: added selinux in mkdir; get_module dm_mod; and load the
+   selinux.so.1 library (gdha, 29/12/2004)
+ - rc.sysinit: disable SElinux in /selinux/enforce (gdha, 29/12/2004)
+ - .config.bb: force CONFIG_SELINUX=n otherwise busybox does not compile
+   on FC3 (gdha, 29/12/2004)
+ - rd-base.sh: lvm(): added LVM v2 information gathering stuff (gdha, 29/12)
+ - test.sh: test 20: improved checks on INITRDSIZE (gdha, 28/12/2004)
+ - test.sh: test 18: remove line new-powermac (SF #1006969, 28/12/2004)
+ - initrd.sh: typo usb_ohci changed to usb-ohci, added usb-uhci (gdha,
+   patch send by Doron Rabia, 21/12/2004)
+ - makeISO9660.in: split_file - added extra info line for debugging
+ - busybox : CVS sync with BB-1.0 (gdha, 15/12/2004)
+ - Config.sh: modifications and/or addition for uDev (gdha, 06/12/2004)
+ - rd-base.sh: modifications and/or addition for uDev (gdha, 06/12/2004)
+ - initrd.sh: modifications and/or addition for uDev (gdha, 06/12/2004)
+ - test.sh: modifications and/or addition for uDev (gdha, 06/12/2004)
+ - linuxrc: modifications and/or addition for uDev (gdha, 06/12/2004)
+ - etc/rc.d/rc.sysinit: modifications and/or addition for uDev (gdha, 6/12/2004)
+v0.8.3
+ - make_common.sh: fix a typo lxk (gdha, 20/11/2004)
+ - make_common.sh: add patch from Narada Hess conc. multiple kernel detection
+   for LINUX_KERNEL (14/11/2004)
+ - test.sh: added test 20: initrd size checking (gdha, 11/11/2004)
+ - start-restore.sh: fix the tr [:space:] by tr ' ' (gdha, 11/11/2004)
+ - make_common.sh: apply patch from SF# 1032754 (gdha, 08/11/2004)
+ - initrd.sh: add sleep command needed to wait for USB attached devices,
+   Patch from Doron Rabia (08/11/2004)
+ - bootflop.sh: add empty quotes to trap statement (gdha, 08/11/2004)
+ - Config.sh/rd-base.sh: remove sfdisk building stuff (gdha, 07/11/2004)
+ - start-restore.sh: SF #1036837 - 3th correction (gdha, 06/11/2004)
+ - start-restore.sh/clone-dsk.sh: use DevFS_naming_mix routine check (gdha)
+ - restore_common.sh: made routine DevFS_naming_mix for the DevFS naming mixing
+   problem (SF#1046301) - will be used by start-restore/clone-dsk.sh
+ - clone-dsk.sh: fix for bug SF#1046301 (DevFS naming mixing) (gdha, 05/11/2004)
+ - start-restore.sh: line 442: rewrote the line to have the boot device for
+   with software raid devices (gdha, 03/11/2004)
+ - start-restore.sh/clone-dsk.sh: added routine (after step 2) Check_df_file
+   (forgotten check that bit me again ;-) (gdha, 29/10/2004)
+ - restore_common.sh:Check_df_file: added additional link fstab.FQDN to 
+   fstab.$HOSTNAME (gdha, 29/10/2004)
+ - Config.sh: added mdsetup to list Binaries and manpaged (gdha, 24/10/2004)
+ - makeISO9660.in: replaced "-P" by "-publisher" as option for mkisofs
+   and growisofs as advised by mkisofs man-page (gdha, 19/10/2004)
+ - Config.sh: added udev, hotplug to BINARIES and copy /etc/hotplug and 
+   /etc/hotplug.d directories to image (gdha, 19/10/2004)
+ - Config.sh: SF #1045621 - aacraid/cciss and modprobe.conf.local were
+   added to SCSI_MODULES and ETC_MODULES (gdha, 18/10/2004)
+ - start-restore.sh: SF #1036837 - 2th correction (gdha, 18/10/2004)
+ - make_common.sh: apply patch of Doron Rabia for ParseDev of raiddisk
+ - initrd.sh: move get_module usbcore just before sd_mod as it must
+   be loaded for a USB disk (thanks Doron Rabia, 09/10/2004)
+ - restore_common.sh: restore_split_file: added check for LAST_CD when an
+   archive is split in several parts (2 Gb pieces). On DVD it asked for
+   next CD even if there was only one (gdha, 07/10/2004)
+ - restore_common.sh: Restore_Splitted_Backup: when extention was tar the
+   restore_split_file line had a missing \ (gdha, 07/10/2004)
+ - start-restore.sh: added some code to handle grub correctly on software
+   raid devices - SF #1036837 (gdha, 03/10/2004)
+ - initrd.sh: SF# 1035231 (add additional check for the lib though)
+ - rd-base.sh: add check for dm_mod (SF #1033565, 03/10/2004)
+ - initrd.sh: added mbcache for ext2 (SF #1029244, 21/09/2004)
+ - Config.sh: OTHER_MODULES: added mbcache (SF #1029244, 21/09/2004)
+v0.8.2
+ - initrd.sh: SF bug #1019764 (get_module megaraid)
+ - rd-base.sh: SF bug #1019817 (change -o into -a for lvmtab)
+ - bootflop.sh: when bootfloppy was full initrd.gz was not copied to the
+   isolinux/ directory (gdha, 04/09/2004)
+ - restore_common.sh: put the $DEBUG in front of restore_split_file (30/08/04)
+ - etc/rc.d/flavors/rc.vanilla: cd to /etc/recovery before starting
+   star-recovery.sh in AUTODR mode (gdha, 30/08/2004)
+ - usr/bin/autodr: sleep a bit more before display the important message,
+   avoids boot messages between AUTODR statement (gdha, 30/08/2004)
+ - restore_common.sh: change restore_split_file to have it calls ask_for_cd.sh
+   instead of pastestream: this solves the problem with multiple dvds and
+   multiple cds (Guillaume Radde, 30/08/04)
+ - Config.sh: set MAXCDSIZE to 4350000 for dvd (Guillaume Radde, 30/08/04)
+ - makeISO9660.in: when AUTODR=y then force BURNCDR=n (gdha, 29/08/2004)
+ - bootflop.sh: Added $DefaultOpt for AUTODR in isolinux.cfg (gdha, 28/08/04)
+ - etc/rc.d/flavors/rc.vanilla: added AUTODR stuff (gdha, 27/08/04)
+ - usr/bin/autodr: new script to runs when AUTODR is set (gdha, 27/08/04)
+ - ansictrl.sh: warn and askyn take in account AUTODR (gdha, 27/08/04)
+ - restore_common.sh: if in AUTODR mode, break it when script asks to enter
+   the following CD of a multi-volume set (gdha, 27/08/04)
+ - rd-base.sh: add check for AUTODR and make a mark of it (gdha, 27/08/04)
+ - Config.sh: added mdadm to BINARIES list (gdha, 22/08/2004)
+ - restore_common.sh: fix restore_split_backup of multiple CDs (patch
+   from Mike Streeter, 22/08/2004)
+ - makeISO9660.in: this patch improves speed when splitting a file to burn 
+   on dvd (Guillaume Radde, 22/08/04)
+ - sync busybox with 1.0-rc3 (gdha, 18/08/2004)
+ - test.sh: test 18; added ppc architecture and check on ybin for new-powermac
+ - Makefile.new-powermac: bug report #1006969 conc. Bootapple.sh
+ - rd-base.sh: bug report #1006967 for not enough i-nodes (gdha, 13/08/2004)
+ - clone-dsk.sh: fix #1007211 for grub (gdha, 13/08/2004)
+ - restore_common.sh: add correct positioning of OBDR tape (gdha, 13/08/2004)
+ - rd-base.sh: if OBDR make a flag in etc/recovery dir (gdha, 13/08/2004)
+v0.8.1
+ - rd-base.sh: make sure that FStype modules are present in modprobe.sh
+ - tar-it.sh: move function SetTapeDensity to above in script (gdha, 02/08/04)
+ - rd-base.sh: fix for bugreport SF#1000059 - modprobe cciss (gdha, 02/08/2004)
+ - restore_common.sh: changed mt -f tape rewind into status (for OBDR)
+ - mkcdrec2.spec: remove error and add warning when installing mkcdrec
+   whithout webmin (Guillaume Radde, 22/07/2004)
+ - initrd.sh: replace mptscsih by mptbase (mptscsih can be found under
+   /proc/scsi) (Guillaume Radde, 22/07/2004)
+ - makeISO9660.in:split file with size >2Gb so they can be stored into
+   iso9660 filesystem (Guillaume Radde, 22/07/2004)
+ - rd-base.sh:change syntax of "for" loop to make mkcdrec works with old
+   bash versions (thanks to rwjm) (Guillaume Radde, 22/07/2004)
+ - restore_common.sh: enable restore of file bigger than 2Gb on dvd
+   (Guillaume Radde, 22/07/2004)
+ - start-restore.sh: add warning before rebooting a Software RAID (gdha, 21/07)
+ - Config.sh: fix SF #994130 (fix SCSIDEVICE for DVD support)
+ - start-restore.sh: fix bugs SF 995175 (gdha, 21/07/2004)
+ - rd-base.sh: lvm(): add support for LVM v2 (gdha, 21/07/2004)
+ - initrd.sh: added minix fs support (gdha, 21/07/2004)
+ - testing OBDR: some minor changes in linux_find_and_prep_root (gdha, 21/07/04)
+ - Makefile: add $@ parameter to 'make install' (gdha, 18/07/2004)
+ - Busy with OBDR code - several scripts (gdha, 13-18/07/2004)
+ - initrd.sh: add usb-storage en usb_ohci for USB CD-ROM support (gdha, 13/07)
+ - bootflop.sh: workaround for "bootfloppy is full" message when mkCDrec
+   utilities are in place (gdha, 09/07/2004)
+ - add usbhid module to list of usb modules to have keyboard and mouse
+   work on kernel 2.6.7 (Guillaume Radde, 09/07/2004)
+ - add modules mptbase and mptscsih autoloaded in initrd to have scsi 
+   disks work at boot (Guillaume Radde, 09/07/2004)
+ - remove syslinux from .spec for ia64 (syslinux does'nt work on ia64)
+ - make install creates /usr/sbin/mkcdrec script (gdha, 03/07/2004)
+ - initrd.sh: for Mandrake added * after "*o" in modules find (gdha,
+   03/07/2004)
+ - rd-base.sh: bootloader was not found due to faulty if (ia64)
+v0.8.0
+ - mkcdrec2.spec: add parted to list of requirements for ia64
+ - rd-base.sh: fix type for ia64 architecture (patch from Guillaume Radde)
+ - makeiso9660.in: some changes for DVD creation under IA64 (patch from
+   Guillaume Radde)
+ - rd-base.sh: strings -1 /etc/lvmtab to capture smaller volume group names
+   with less then 4 characters (gdha, 30/06/2004)
+ - webmin/*: contribution of Guillaume Radde (23/06/2004)
+ - mkcdrec2.spec: changes needed for rpm ia64 type (Guillaume Radde)
+ - applied patch Guillaume Radde for IA64 fixes for several modules (23/06/2004)
+ - packinging/mkcdrec2.spec: remove sfdisk, tinylogin and udhcp (gdha, 09/06/2004)
+ - .cvsignore: add busybox to list to ignore (will update directly from BB-1.x CVSROOT)
+ - Makefile*: remove links to tinylogin and udhcp (gdha, 09/06/2004)
+ - remove busybox-0.60.5, tinylogin-0.80 and udhcp (busybox-1.x does it all)
+ - /etc/securetty: customised version (gdha, 09/06/2004)
+ - etc/rc.d/rc.sysinit: several tweeks for kernel 2.6.x needed (gdha, 09/06/2004)
+ - test.sh: Test 10: detect ATAPI cd writers on kernel 2.6.x properly (gdha, 09/06/2004)
+ - rd-base.sh: add '-q' to all modprobe calls (gdha, 06/06/2004)
+ - Config.sh: add nls_utf8 to OTHER_MODULES for kernel 2.6 (gdha, 06/06/2004)
+ - test.sh: add sfdisk to check_exe (sfdisk directory will disappear)
+ - busybox-pre10: testing with kernel 2.6.x to replace v0.60.5 (gdha)
+ - test.sh: Test 14: added elif boot-`uname -r` for INITRD (gdha, 05/06/2004)
+ - rd-base.sh: /etc/rc.d/network for multiple NETWORK_MODULES (gdha)
+ - clone-dsk.sh: fix grub_config part (Thomas Aeby/gdha, 27/05/2004)
+ - bootflop.sh: include patch from Thomas Aeby for kernel 2.6.x (when using
+   isolinux then make bootfloppy empty)
+ - initrd.sh: include patch from Thomas Aeby for kernel 2.6.x (ram0 is
+   mapped to a disk image and '-o loop' is used to mount it)
+ - rd-base.sh: additional ia64 stuff, e.g. lvm (Guillaume.Radde, 27/05/2004)
+ - makeISO9660.in: fix typo in elif (Guillaume.Radde, 27/05/2004)
+ - Makefile.ia64: fine tuning ia64 support (Guillaume.Radde, 27/05/2004)
+ - mkcdrec2.spec: remove sfdisk cp (gdha, 23/05/2004)
+ - Config.sh: add sfdisk and parted to list of BINARIES (gdha, 23/05/2004)
+ - Makefile.ia64: add ia64 support (Guillaume.Radde)
+ - rd-base.sh: add ia64 support (Guillaume.Radde) and disable sfdisk compilation
+ - test.sh: add ia64 support (Guillaume.Radde)
+ - start-restore.sh: add ia64 support (Guillaume.Radde)
+ - make_common.sh: add ia64 support (Guillaume.Radde)
+ - makeISO9660.in: add ia64 support (Guillaume.Radde)
+ - initrd.sh: add ia64 support (Guillaume.Radde)
+ - common.sh: add ia64 vmlinuz kernel (Guillaume.Radde)
+ - bootia64.sh: make bootable IA64 image (Guillaume.Radde)
+ - /etc/rc.d/rc.usb: moad USB modules at boot time (Guillaume.Radde)
+ - etc/rc.d/rc.sysinit: add rc.usb support (Guillaume.Radde)
+ - Config.sh: added new entries for IA64 support (Guillaume.Radde)
+v0.7.9
+ - test.sh: halt if ash, cdrecord, mkisofs is not found (gdha, 03/05/2004)
+ - cutstream/Makefile: large file system support - fix by Mubashir Cheema
+ - rd-base.sh: do a sort -u on md/df.hostname to filter multiple swap entries (gdha, 02/05/2004)
+ - make_common.sh: fix to create excluded mountpoints (gdha, 24/04/2004)
+ - start-restore.sh: Step 7: if CDROM, then Check_Multi_volume (gdha, 24/04/2004)
+ - restore_common.sh: comment . ./ansictrl.sh (gdha, 24/04/2004)
+ - restore_common.sh: improved resize_partition_layout (gdha, 24/04/2004)
+ - rd-base.sh: Copy_dev: replace cp -R with rsync (fix by Rainer Anschober)
+ - rd-base.sh: add code to track down md swap devices into their physical devices
+   and add those lines to md/df.$HOSTNAME - needed for cloning (gdha, 24/04/2004)
+ - Config.sh: add BusLogic and pcnet32 to modules list (handy to have standard
+   on CD for restore test within VMware) (gdha, 24/04/2004)
+ - test.sh: add rsync to the check_exe list for /dev copy to ram disk (gdha, 24/04/2004)
+ - clone-dsk.sh: add plenty of code to clone a Software RAID meta-device to a single
+   IDE/SCSI device (10-24/04/2004)
+ - restore_common.sh: improved Resize_partition_layout (decreasing part) (gdha, 10/04/2004)
+ - rd-base.sh Calculate_used_space new routine (md devices too) (gdha, 06/04/2004)
+ - bootflop.sh: added memdisk feauture (gdha, 20/03/2004)
+ - messages/extra?.txt: added entry for memdisk (gdha, 20/03/2004)
+ - test.sh: test 10: added CDRW in grep list - SF#909008 (gdha, 20/03/2004)
+ - make_common.sh: SF bug # 914216: [ ! -d $CDREC_ISO_DIR ] (gdha, 20/03/2004)
+ - initrd.sh: added mkdir command to binary list (gdha, 14/03/2004)
+ - linuxrc: check and mount /dev/pts (gdha, 14/03/2004)
+ - etc/group: add tty group for /dev/pts (gdha, 14/03/2004)
+ - make_common.sh: Find_Linux_kernel: made sure LINUX_KERNEL parameter
+   and /tmp/LINUX_KERNEL are in sync (gdha, 11/03/2004)
+ - initrd.sh: add devfsd/conf to /etc directory (gdha, 10/03/2004)
+ - Config.sh: added some file to ETC_FILES (sysctl.conf, modules.autoload,
+   modules.autoload.d/*, mdadm.conf) and to BINARIES (pam_console_apply,
+   sysctl and modules-update) for Gentoo (gdha, 10/03/2004)
+v0.7.8
+ - rd-base.sh/initrd.sh: build_lib_list: added "grep -v linux-gate" to avoid
+   empty target library (sorry sysinfo DSO: follow the LSB pls)
+ - removed cksfv from mkcdrec (replaced by md5sum) and adapted all Makefiles
+ - test.sh: Test 10: added ATAPI cd-writer support in search function (gdha, 28/02/2004)
+ - rd-base.sh: Check_Bootloader: if bootloader is UNKNOWN check all
+   local disks for MBR and rerun function again (gdha, 28/02/2004)
+ - rd-base.sh: Is_dsk_bootable: dump mbr only once (gdha, 28/02/2004)
+ - make_common.sh: added function Find_local_disks (gdha, 28/02/2004)
+ - make_common.sh: Fail: write fatal message to log file too (gdha, 28/02/2004)
+ - clone-dsk.sh: added */geometry.* to test 2 (gdha, 25/02/2004)
+ - bootflop.sh: added 'modprobe msdos' to force module load which avoids
+   bumping out when trying to mount msdos floppy (gdha, 25/02/2004)
+ - make_common.sh: Find_Linux_kernel: bug tracing for grub's menu.lst and
+   fixing loosing the correct kernel in a do loop (gdha, 20/02/2004)
+ - Attention for kernel 2.6.x: upgrade mkinitrd v3.4.42 to v3.5.13 so it can 
+   handle the *.ko kernel objects (dep. is dietlibc-0.21)
+   Some excellent docs:
+	* http://www.codemonkey.org.uk/docs/post-halloween-2.6.txt
+	* http://thomer.com/linux/migrate-to-2.6.html
+	* http://kerneltrap.org/node/view/799
+ - initrd.sh: added recursive cp for /etc/modules* (Gentoo contains sub-
+   directories as /etc/modules.autoload.d and /etc/modules.d)
+ - rc.sysinit, rd-base.sh: create modprobe.sh to preload certain SCSI or
+   FC modules before any disk can be seen (gdha, 05/02/2004)
+ - Config.sh: added symbolic links for depmod, insmod, lsmod and modprobe 
+   from /bin/ to /sbin [SF #889404] (gdha, 03/02/2004)
+v0.7.7
+ - initrd.sh: changed the get_module routine for better extraction of
+   2.4/2.6 kernel modules (gdha, 24/01/2003)
+ - rd-base.sh: disable Make_cksfv: md5sum will be used instead (gdha, 21/01/04)
+ - Config.sh: removed in BINARIES all references to insmod/insmod.old &
+   friends as rd-base.sh is now taking care of this (gdha, 21/01/2004)
+ - rd-base.sh: improved the mount.sh script with additional module loading
+   depending on FS type (gdha, 21/01/2004)
+ - rd-base.sh: added code to copy correct insmod, etc to the image according
+   the minor kernel version required to support 2.6 based kernels
+ - Config.sh: ETC variables: added modprobe.conf/devfs to list
+ - initrd.sh: fix kernel_minor_nr extraction and strip_copy the correct insmod
+   according the kernel_minor_nr (gdha, 20/01/2004)
+ - Attention for kernel 2.6.x: install the module-init-tools first of all
+   to rebuild new insmod/modprobe/... The 2.4.x are renamed to .old!!!!!
+   See the README file (of module-init-tools) for build instructions.
+ - makeISO9660.in: calculate md5 for all files in image (gdha, 20/01/2004)
+ - rd-base.sh/initrd.sh: make mkCDrec Linux kernel version 2.6.x aware
+ - test.sh: test 15: change grep Mem: into "MemTotal:" and divide by 1000 
+   instead of 1000000 (Albert Cranford, 12/01/2004)
+ - rd-base.sh: changed if [ x$MODE = xpath -a -z $ARG ] into 
+   if [ x$MODE = xpath ] && [ -z $ARG ] for better debugging, e.g.
+   make -m rescue 2>&1 | tee make.res 
+   (Albert Cranford, 12/01/2004)
+ - Config.sh/rd-base.sh: added the Linux Tivoli Storage Manager (TSM) client
+   support - patch donated by Chris Strasburg (gdha, 12/01/2004)
+ - etc/passwd: login shell for mkcdrec is menu.sh (gdha, 28/12/2003)
+ - rd-base.sh: cp menu.sh to /bin (gdha, 28/12/2003)
+ - contributions/menu.sh: login menu script (gdha, 28/12/2003)
+ - Config.sh: added md5sum to list of BINARIES and MAN (gdha, 20/12/2003)
+ - makeISO9660.in: added md5sum for computing MD5 message digest for all
+   file in the root of the CD (Checksums.md5) ( gdha, 20/12/2003)
+ - makeISO9660.in: added bz2 in exclude_list for NFS (gdha, 20/12/2003)
+ - test.sh: test 12: added warning with DEVFS=1 for Mdk (gdha, 03/12/2003)
+ - initrd.sh: added -f option with gzip and remove modprobe from list of
+   executables needed by initrd. Mandrake 9.2 uses static versions of
+   modprobe and insmod instead of shared versions and there is no room left
+   for both (gdha, 03/12/2003)
+v0.7.6
+ - makeISO9660.in: exclude *.tar.gz for PATH mode (NFS,CIFS) while creating
+   the ISO9660 image - backups are on remote share (gdha, 25/11/2003)
+ - Makefile/dispatch.sh: fix batch mode for PATH mode (gdha, 25/11/2003)
+ - start-restore.sh: in FSF section /cdrom/ must be $RESTORE_PATH (gdha)
+ - prepPXE.sh: script to prepare PXE boot environment (gdha, 23/11/2003)
+   See presentation "Making mkCDrec PXE aware" - 29/11/2003 - Brussels
+ - rd-base.sh: make a tmp/NFS stamp for NFS based backups (gdha, 23/11/2003)
+ - bootflop.sh: mkcdrec.lss was not copied to boot.img (gdha, 23/11/2003)
+ - etc/rc.d/rc.sysinit: force proc mount with PXE (gdha, 23/11/2003)
+ - initrdh.sh: Config.sh 2>dev.null (gdha, 23/11/2003)
+ - mkcdrec2.spec: added contributions directory (gdha, 13/11/2003)
+v0.7.5
+ - Config.sh: add bunch of new links for Clam Antivirus (part of the new
+   mkcdrec utilities) (gdha, 26/10/2003)
+ - rd-base.sh: added 254 block device number of LVM 2.x (gdha, 25/10/2003)
+ - common.sh: As syslinux.cfg doesn't force the RootDevice, the rescue
+   disk attempts to boot from the hard disk partition and fails sometimes
+   (fixed mailed by Francois Cerbelle, 09/10/2003)
+ - cutstream.c: fix compile problem with older gcc versions - fix mailed
+   by Jï¿½me Warnier (gdha, 07/10/2003)
+ - rd-base.sh: Copy_dev: cd MKCDREC was on wrong place (gdha, 20/09/2003)
+ - tar-it.sh: Minus_excluded_dirs: minus_Kb calculates the files too
+   now instead of only dirs (gdha, 20/09/2003)
+v0.7.4
+ - packaging/mkcdrec2.spec: added doc/style into rpm build (gdha, 07/09/2003)
+ - linuxrc_pre/initrd.sh/rd-base.sh: added support for User Mode Linux
+   (patch from Ron Yorston, see mkcdrec_howto at SF)
+ - usr/bin/groups: small script written for SF bug 796882 (gdha, 07/09/2003)
+ - contributions/prepPXE.sh: script to build root on TFTP/NFS server to enable
+   mkCDrec to use PXE booting (gdha, 03/09/2003)
+ - test.sh: Test 10: CD-RW detection improvement (SF #750250, 26/08/2003)
+ - test.sh: test for growisofs when DVD support is selected (gdha, 26/08/2003)
+ - makeISO9660.in: guide integrity testing errors (SF #780075, 25/08/2003)
+ - rd-base.sh: changed the way MAXCDSIZE is fed into cutstream (gdha)
+ - cutstream.c: maxcdsize now read from /tmp/cutstream.h instead of config.h
+   (no pre-compiled fixed size anymore SF bug #771467 - gdha, 25/08/2003)
+ - make_common.sh: Find_Line_kernel: fix for grub's menu.lst with multiple
+   matches SF #781696 (especially for mdk!) (gdha, 23/08/2003)
+ - bootflop.sh: clarified the rescue bootfloppy image safekeeping (gdha,
+   15/08/2003)
+ - rd-base.sh: improve the mkdirs.sh script + fix the creation of mountpoints
+   in the ramdisk instead of the restored disk (gdha, 15/08/2003)
+ - rd-base.sh: remove fix of 18/07/2003 and try again (gdha, 07/08/2003)
+ - rd-base.sh: for mixed md/lvm/ide/sd sfdisk.dsk only once (gdha, 18/07/2003)
+ - rd-base.sh: force a vgscan in buildLVM script (gdha, 18/07/2003)
+ - rd-base.sh: improved the buildLVM script (gdha, 17/07/2003)
+ - rd-base.sh: fixed mkreiserfs -j issue with lvm (gdha, 17/07/2003)
+v0.7.3
+ - test.sh: test 10: added 2th test for CD-RW (gdha, 15/07/2003)
+ - rd-base.sh: lvm(): analyse only once (Peter Gibbs, 15/07/2003)
+ - mkcdrec2.spec: changed rpm into rpmbuild (gdha, 05/07/2003)
+ - rd-base.sh: FORCE_DHCP_SUPPORT=y: added Y too (gdha, 05/07/2003)
+ - makeISO9660.in: added the pad option -T (gdha, 19/06/2003) OK?
+ - rd-base.sh: Check_partition_file: added check for # (gdha, 18/06/2003)
+ - rd-base.sh: Check_partition_file: use tmp file instead of piping the
+   input file to itself (Stuart Clark, 18/06/2003)
+ - mkcdrec2.spec: improved syntax for rpm building (gdha, 14/05/2003)
+v0.7.2
+ - test.sh: Test 10: improved CD-writer detection (gdha, 07/05/2003)
+ - sfdisk/sfdisk.c: applied diff from denecke at fh-muenster.de (07/05/2003)
+ - tinylogin/passwd.c: applied diff from denecke at fh-muenster.de
+ - initrd.sh: get_module inflate_zlib.o needed for mdk 9.1 - found by
+   Robert Sprockeels (gdha, 06/05/2003)
+ - initrd.sh: link sbin to bin; added libz.so for booting from a CD made
+   on Mandrake 9.1 (gdha, 01/05/2003)
+ - Config.sh: MKDIR_LIST: remove a / too many and added etc/network
+ - Config.sh: added insmod.old, lsmod.old, modprobe.old, depmod.old to the
+   list of BINARIES and modules.conf.local to ETC_FILES (gdha, 01/05/2003)
+ - busybox/Config.h: comment LSMOD applet for SuSe 8.2 (gdha, 01/05/2003)
+ - rd-base.sh: Init_rootfs: add another mkdir loop for excluded mountpoints
+   (F. Van Liedekerke, 22/04/2003)
+ - tar-it.sh: added "x" option to du -sk to avoid crossing other file-
+   systems [SF bugreport 709426] (gdha, 21/04/2003)
+ - test.sh: test 4: use mkfs.ext3 for ext3 instead of mkfs.ext2 (gdha, 21/04/2003)
+ - rd-base.sh: applied raid patch of Florian Thiel (gdha, 16/04/2003)
+ - test.sh: added test 18: architecture supported (gdha, 14/04/2003)
+ - added initial Sparc support (gdha, 10/04/2003)
+ - etc/profile: added LS_COLORS (gdha, 08/04/2003)
+ - rd-base.sh/makeISO9660.in: added superrescue awareness (gdha, 02/04/2003)
+ - Makefile: added a superrescue section (gdha, 31/03/2003)
+ - Config.sh: ISOLINUX: if-elif-fi clausule for RedHat, Slackware as 
+   isolinux.bin lives in different paths (gdha, 16/03/2003)
+ - rd-base.sh: added sort -u to the mount -v output (gdha, 16/03/2003)
+ - test.sh: check_exe: remove isolinux.bin from search list (forgot to
+   remove it) as it is hard-coded in Config.sh (gdha, 16/03/2003)
+v0.7.1
+ - syslinux-2.00 is abandoned in favour of the syslinux/isolinux found
+   in your distribution - the sources are still here until it is proven
+   to be working (gdha, 04/03/2003)
+ - rd-base.sh: added a forgotten 'done' keyword for the buildraid.sh script,
+   improved mkfs.md scripts (thanks to Greg's e-mail, 04/03/2003)
+ - Config.sh: added lynx to BINARIES + a trimmed lynx.cfg in etc
+ - rd-base.sh: changed -v:jfs into -L:jfs (gdha, 01/03/2003)
+ - Config.sh: added more utils for JFS (gdha, 01/03/2003)
+ - test.sh: test 14: take LINUX_VERSION in account for finding the proper
+   initrd support in the kernel (gdha, 01/03/2003)
+ - initrd.sh: uses services file from mkcdrec instead of /etc (gdha, 01/03/2003)
+ - bootfloppy.sh: added a menu to syslinux/isolinux (gdha, 23/02/2003)
+ - tinylogin/install.sh: install mode became 4755 for modem dial-in not
+   as root (thanks to R. Zybert)
+ - Config.sh: add dd_rescue and lshw to links (gdha, 22/02/2003)
+ - rd-base.sh: modprobe the proper raid-level module in mkfs.md (gdha, 19/02/03)
+ - BusyBox/Config.h: comment UMOUNT command, use OS umount (gdha, 18/02/2003)
+ - rd-base.sh: fix Software RAID code (gdha, 16-17/02/2003)
+ - restore_common.sh: applied patch of Ron Yorston (15/02/2003)
+ - tar-it.sh: Write minus KB per filesystem away in file FS_min.kb
+ - rd-base.sh: typo in fail function call - Fail is the name (gdha, 15/02/2003)
+ - test.sh: test 2: fix for minor nr of mkisofs (gdha, 13/02/2003)
+ - rd-base.sh: skip autofs mountpoints for backup (gdha, 11/02/2003)
+ - Config.sh/test.sh: fixing scanbus for dvd (gdha, 31/01/2003)
+v0.7.0
+ - make_common.sh: multiple LINUX_KERNEL fix (gdha, 20/01/2003)
+ - makeISO9660.in: forgot to define DVD_Drive variable (gdha, 19/01/2003)
+ - test.sh: test 2: nasm/netpbm test relaxed. For rpm version not needed, only
+   when you're compiling syslinux (gdha, 17/01/2003)
+ - etc/syslog.conf: made it compatible with other distro's (gdha, 17/01/2003)
+ - applied patch for changing all instances of /tmp in to $TMP_DIR to avoid
+   problems with tmpfs. Thanks to Vadim Shliakhov (17/01/2003)
+ - applied patch for LINUX_VERSION according to corresponding LINUX_KERNEL.
+   Thanks to Peter Caldes for fixing this (17/01/2003)
+ - restore-fs.sh: bug fix in selecting the target partition. Thx to Sietse
+   Dijkstra for finding this bug (gdha, 17/01/2003)
+ - rd-base.sh: added ./ before install.sh of busybox/tinybox. Only a bug
+   for those who installed the RPM version (gdha, 17/01/2003)
+v0.6.9
+ - rd-base.sh: /etc/raid/raidtab support for Debian 3 (gdha, 12/01/2003)
+ - bootflop.sh: copy isolinux.bin from bin/ instead of syslinix/ and add 
+   bin/isolinux.bin to CVS (gdha, 12/01/2003)
+ - Makefile.x86: added isolinux.bin to syslinux build (gdha, 12/01/2003)
+ - cutstream: renamed cutstream-0.3 directory into cutstream (easier for
+   CVS maintenance); and made cutstream.c DVD int64 aware (gdha, 12/01/2003)
+ - rd-base.sh: made script RPM aware (do not compile if executables exist
+   in $MKCDREC_DIR/bin) (gdha, 11/01/2003)
+ - mkmakeISO9660.sh: bring SCSIDEVICE out of the loop (gdha, 11/01/2003)
+ - tar-it.sh: avoid error message missing ENC_PROG_PASSWD (gdha, 11/01/2003)
+ - Makefile.x86: added build rule - needed for RPM build (gdha, 10/01/2003)
+ - packaging/mkcdrec2.spec: initial mkcdrec binary rpm buid (gdha, 10/01/2003)
+ - Config.sh/test.sh: initial dvd support (gdha, 09/01/2003)
+ - test.sh: add mkisofs version check for dvd (gdha, 09/01/2003)
+ - rd-base.sh: FStype= capture tuned for Debian 3.0 (gdha, 08/01/2003)
+ - test.sh: correct TestErrCount behaviour in loop (test 10, gdha, 07/01/2003)
+ - rd-base.sh: added EVMS libs loop to make_libs (gdha, 06/01/2003)
+ - Makefile.x86: add a line to delete .depend files in syslinux (gdha, 05/01/03)
+ - modules/gpm added (gdha, 18/12/2002)
+ - test.sh: replace check_exe ssh/rsh by check_exe $REMOTE_COMMAND as 1 of
+   the 2 is enough (gdha, 17/12/2002)
+ - Mike Flyn did some big changes needed for new-powermac platform. The
+   Makefile is now split in 2 pieces, etc... (mike, 15/12/2002)
+ - Makefile: corrected the testonce block (gdha, 11/12/2002)
+v0.6.8
+ - doc/*.html: update doc for release.
+ - rd-base.sh: corrected To_Backup mountpoints again, after changes to
+   exclude mountpoints list (gdha, 09/12/2002)
+ - rd-base.sh/tar-it.sh: added some more safety-belts (gdha, 08/12/2002)
+ - makeISO9660.in/mkmakeISO9660.sh: added missing variables BOOTARCH which
+   caused mkisofs think on x86 it was a mac architecture (gdha, 08/12/2002)
+ - rd-base.sh: get the exclude mountpoint straight this time (gdha, 07/12/2002)
+ - Makefile/test.sh: added the testonce clausule to avoid newbies to
+   start with mkCDrec without checking their system and by doing this
+   avoiding crying-for-help calls (gdha, 06/06/2002)
+ - replaced syslinux-1.63 with v2.00 (gdha, 05/06/2002)
+ - rd-base.sh: improve exclude mount-points routines (gdha, 03/12/2002)
+ - test.sh: test 2: found part - subver. check for tar/nasm (gdha, 02/12/2002)
+ - test.sh: test 2: mkisofs changed into ${MKISOFS} (gdha, 27/11/2002)
+ - restore-fs.sh: sometimes error with calculating partition_size when it
+   ended with - or +. The - or + is stripped (gdha, 26/11/2002)
+ - rd-base.sh/restore_common.sh/restore-fs.sh/tar-it.sh: added support
+   for the 'auto' fs-type (SF #640777, gdha, 25/11/2002)
+ - initrd.sh: added [ test echo pwd to the binaries list (flyn/gdha)
+ - BusyBox-0.60.5: update lash.c & usage.h from latest snapshot (16/11/2002)
+ - with the new inittab from BusyBox the virtual ttys are ok again
+ - rd-base.sh: substite SERIAL with empty id in inittab (gdha, 20/11/2002)
+ - etc/inittab: changes needed for BusyBox-0.60.5 (gdha, 20/11/2002)
+ - BusyBox-0.60.5: update lash.c & usage.h from latest snapshot (16/11/2002)
+ - Makefile: changed mformat rule (become a must have) (gdha, 10/11/2002)
+ - bin/*: removed x86 based binaries - make test will check those (gdha, 10/11)
+ - Makefile.apple: Mike Flyn started an Debian Apple version
+ - rd-base.sh/clone-dsk.sh/restore_common.sh: added support for Promise
+   FastTrack TX2 IDE RAID (gdha, 31/10/2002)
+ - busybox: removed version 0.60.3 and replaced it with 0.60.5 (30/10/2002)
+   New busybox version was necessary for UninetLinux beta3.
+ - Config.sh: added mkfs.jfs, fsck.jfs to BINARIES; foresee a link for
+   fsck.msdos (gdha, 26/10/2002)
+ - udhcp added + rd-base.sh: support for FORCE_DHCP_SUPPORT (gdha, 20/10/2002)
+ - test.sh: test 2: add tar subversion test (gdha, 20/10/2002)
+ - Config.sh/makeISO9660.in: added CDRECORDOPT value (gdha, 19/10/2002)
+ - Changelog: removed @ from all e-mail addresses to block spam collectors
+ - makeISO9660.in: blank-cdrw: disable eject + check for blank (suggestion 
+   from sancelot free.fr) (gdha, 19/10/2002)
+ - test.sh: added ulimit -a to linux version section (gdha, 19/10/2002)
+ - Config.sh: added link for chntpw + documentation (gdha, 19/10/2002)
+ - rd-base.sh: better NFS mount-point grabbing [SF# 610663]
+ - rd-base.sh: write etc/recovery/REMOTE_COMMAND file for recovery with
+   remote tape (rsh, ssh) reported by Juan Carlos Rey Anaya (gdha, 17/10/2002)
+ - restore-fs.sh: forgot xfs and jfs fsck cases at the end (gdha, 17/10/2002)
+ - restore_fs.sh: added Check_df_file function (gdha, 17/10/2002)
+ - restore_common.sh:  made Check_df_file function (gdha, 17/10/2002)
+v0.6.7
+ - rd-base.sh: for software raid added autoprobing for FStype & raid1
+ - Config.sh: added fsck.xfs to BINARIES, added a link for readline.so.4.3,
+   corrected the comment for KERNEL_APPEND (gdha, 10/10/2002)
+ - etc/passwd: added sshd user needed by RedHat 8.0 (gdha, 06/10/2002)
+ - Config.sh: add var/empty/sshd and consoletype needed by RH8 (gdha)
+ - rd-base.sh: RedHat 8 uses almost 20000 inodes on rd-base.img with the
+   /dev, therefore, increased inodes from 18000 to 24000 and RAMDISK_SIZE
+   from 24 to 32 (gdha, 04/10/2002)
+ - test.sh: improved test 10 (cdrecord found, gdha, 04/10/2002)
+ - initrd.sh: added '-type f' to find module (SF #616995, 02/10/2002)
+ - bootflop.sh: try smallCDrecDoc.lss as bootlogo (gdha, 16/09/2002)
+ - update man-page of busybox and BusyBox.html (gdha, 15/09/2002)
+ - Config.sh: add stty to MAN_PAGES (gdha, 15/09/2002)
+ - makeISO9660.in: only do a heavy checking on the boot cd (J. C. Pereira)
+ - ask.for.cd.sh: read MY_TTY from /tmp/my_tty written by ansictrl.sh (gdha)
+ - ansictrl.sh: changed MY_TTY code (gdha, 14/09/2002)
+ - bootflop.sh: added serial port support to syslinux (gdha, 14/09/2002)
+ - rd-base.sh: Copy_etc: added code to activate serial console (gdha,
+   14/09/2002)
+ - test.sh: add test 17: check for serial console (gdha, 13/09/2002)
+ - restore_common.sh: applied patch of Ron (SF#607297, 13/09/2002)
+ - make_common.sh: Find_linux_kernel: /boot/grub check (SF#599731, 13/09/02)
+ - initrd.sh: do not load ultima modules (gdha, 10/09/2002)
+ - rd-base.sh: added modprobe FStype with DISK type restore in mount.sh
+   script (gdha, 09/09/2002)
+ - start-restore.sh: forgot md/mkfs.* lvm/mkfs.* in loop of mkfs.
+   Thanks Michel  APPLAINCOURT for pinpointing this (gdha, 09/09/2002)
+ - makeISO9660.in: Added safety code for failed CDR writing. Ask user to put
+   aside failed image and continue (Ctrl-C to cancel) (gdha, 09/09/2002)
+ - test.sh: test 14: remove trailing spaces and options from BOOT_FILE_NAME
+   (gdha, 05/09/2002)
+ - start-restore.sh/clone-dsk.sh: added --device-map=${GRUB_DEVMAP} to the
+   grub command (SF bug #597900), (gdha, 04/09/2002)
+v0.6.6
+ - make_common.sh: Find_Linux_kernel: improved code to find the proper linux
+   label (gdha, 20/08/2002)
+ - makeISO9660.in: remove /tmp/rd-base.img.$$ too after verification (gdha,
+   19/08/2002) 
+ - rd-base.sh: differentiate between DISK and NFS destination paths - make
+   a mount.sh script to remount with mkCDrec CD (gdha, 17/08/2002)
+ - Config.sh: corrected links to libnss_files.so.1 and libnss_dns.so.1
+ - restore_common.sh: Step1: added read RESTORE_DEV to be able to probe
+   special loadable modules, e.g. nfs (gdha, 17/08/2002)
+ - rd-base.sh: mkdirs.sh: removed leading / from mkdir lines (gdha, 13/08/2002)
+ - make_common.sh: Build_exclude_list: comment out if clausule for CDREC_ISO_DIR
+   as it excludes /tmp by default and breaks X11 xfs (gdha, 11/08/2002)
+ - rd-base.sh: mkfs.ext2 of rd-base.img increase inodes to avoid no space
+   left problems (when there still space left) (gdha, 11/08/2002)
+ - rd-base.sh: added initial support for EVMS [untested] (gdha, 11/08/2002)
+ - test.sh: find the proper kernel name (SF patch id #583204, gdha, 11/08/2002)
+ - ansictrl.sh: changed /dev/tty into `tty` as work-around for the
+   /dev/tty error on 1st console (gdha, 11/08/2002)
+ - ask.for.cd.sh: changed /dev/tty into `tty` as work-around for the
+   /dev/tty error on 1st console (gdha, 11/08/2002)
+ - restore_common.sh: changed /dev/tty into `tty` as work-around for the
+   /dev/tty error on 1st console (gdha, 11/08/2002)
+ - restore_common.sh: fixed [ f:  integer expected - make it a string compare
+   (Harald Lang, 09/08/2002)
+ - Config.sh: EXCLUDE_LIST= removed /tmp/* as a whole from the list because
+   it may (and will) break Xfs on RedHat 7.[23]. See SF bug#574287.
+   ISOFS_DIR and all CDrec* in /tmp are skipped automagically (gdha, 09/08/2002)
+ - submitted bug report to busybox concerning read </dev/tty error (device not
+   found) on tty1 (1st console) during cloning or restore (gdha, 03/08/2002)
+ - initrd.sh: get_module: appended head -1 to find (Zoltï¿½ Csizmadia,
+   29/07/2002)
+ - start-restore.sh/clone-dsk.sh: force modprobe of FStype and in case of
+   ext3 force freext3 module too (gdha, 28/07/2002)
+ - rd-base.sh: several improvements (add NTFS support, use mkdosfs instead
+   of mkfs.dosfs, your umount instead of BusyBox' one (Matthew Fidler)
+ - test.sh: test 14: check if /boot/System.map link exist (gdha, 22/07/2002)
+ - test.sh: test 9: added "L" parameter to ls command to follow symbolic
+   link esp. for mdk (Michael Hill, 19/07/2002)
+ - make_common.sh: changed Current_kernel_label because /proc/cmdline does not
+   contain string linux, e.g. mdk (Michael Hill, 19/07/2002)
+ - makeISO9660.in: added code for heavy verification (flyn, 15/07/2002)
+ - rd-base.sh: accept password with spaces in it for encryption (flyn,
+   15/07/2002)
+ - Config.sh: added HEAVY_VERIFY=y for heavy verification (flyn, 15/7/2002)
+v0.6.5
+ - Config.sh: added mii-tool to BINARIES and MANPAGES (gdha, 30/06/2002)
+ - start-restore.sh/clone-dsk.sh: strip non-numerical characters before
+   deducting one in GRUB_PARTITION (gdha, 28/06/2002)
+ - rd-base.sh: fix bug #570469 - /dev/shm creation (gdha, 27/06/2002) 
+ - Config.sh: fixed type jdb, should have been jbd (in OTHER_MODULES)
+ - rd-base.sh: rm -rf ${TMP_DIR} instead of -f complain (gdha, 25/06/2002)
+ - start-restore.sh / clone-dsk.sh: patch grub restore code with a problem
+   when the /boot/grub/device.map was missing (Tobias Jahn <jahn in.tum.de>)
+ - linuxrc: minor fixes by flyn (19/06/2002)
+ - rd-base.sh: got rid of tty does not exist error when using devfsd,
+   ANSI-fication of encryption password (flyn, 19/06/2002)
+ - Config.sh: only one parameter left for encryption (flyn, 19/06/2002) 
+ - Config.sh: added guessfstype to BINARIES list (gdha, 18/06/2002)
+ - usr/bin/shutdown: linked to ctrl-alt-del script (gdha, 18/06/2002)
+ - etc/profile: added tty -s if ruleset (gdha, 18/06/2002)
+ - hacking/cvs_add_dir: add complete directory-tree to mkcdrec CVSROOT (gdha)
+ - replaced busybox-0.60.2 with busybox-0.60.3 (gdha, 17/06/2002)
+ - etc/profile: changed the \u into $USER (gdha, 17/06/2002)
+ - rd-base.sh: corrected the destination path of lib/dev-state to $ROOTFS (gdha,
+   17/06/2002)
+ - mediacheck/ : added the sources to check/implant a md5 on an iso9660 image.
+   The code is borrowed from anaconda-7.3 source package from RedHat 7.3
+   The purpose is that each iso9660 image will carry its own md5sum. Be care-
+   ful as the implanted md5 is not the same as md5sum on the whole image.
+   Marginal tweaks done (gdha, 16/06/2002)
+ - hacking/mount_images: adding exit codes when mounting fails (gdha, 16/06/02)
+ - makeISO9660.in: changed the md5sum code to work with the new implantisomd5
+ - added mediacheck/ sub-tree which burns the md5sum into the iso9660 image
+   itself. No need to keep track of the md5sum of each individual image.
+   Programs were borrowed from 'anaconda' project of RedHat 7.3 distro
+   (gdha, 16/06/200)
+ - rd-base.sh: improved and cleaned up encryption passwd code (flyn, 06/06/2002)
+v0.6.4
+ - rd-base.sh: added extra line into mkdirs.sh for mountpoints under /mnt,
+   needed to mount floppy, cd, etc. (gdha, 29/05/2002)
+ - start-restore.sh: fix /boot/chain.b error (see clone-dsk.sh)
+ - clone-dsk.sh: fix error with 'Fatal: open /boot/chain.b: No such file or
+   directory' during the lilo phase (cloning disk). (gdha, 28/05/2002)
+ - makeISO9660.in: added md5sum calculation of CDrec.iso and write it to the
+   mkcdrec.log file (gdha, 26/05/2002)
+v0.6.3
+ - bootflop.sh: make a backup bootflop.img to floppy/ if possible (gdha, 08/05)
+ - test.sh: test 9: fine-tuned the bootfloppy part (gdha, 08/05/2002)
+ - rd-base.sh: added support for minix as root_fs (gdha, 08/05/2002)
+ - test.sh: mkreiserfs implemented for ROOT_FS, but currently still fails
+   on non-block devices (mount does not work)
+ - make_common.sh: removed TMP_DIR and LOG definitions (gdha, 06/05/2002)
+ - mkmakeISO9660.sh: undo changes again as TMP_DIR, LOG in Config.sh are
+   enough (gdha, 06/05/2002)
+ - rd-base.sh: added /lib/dev-state check + copy (gdha, 06/05/2002)
+ - Config.sh: added TMP_DIR and LOG variables again (were in make_common.sh),
+   needed for creating multiple volumes (gdha, 06/05/2002)
+ - mkmakeISO9660.sh: LOG and TMP_DIR are not defined in Config.sh, so they were
+   not replaced in makeISO9660.in (liedekef, 5/5/2002)
+ - make_common.sh: added a check so when a suitable kernel has been found
+   in lilo.conf, grub.conf is no longer searched. (liedekef, 5/5/2002)
+ - mkmakeISO9660.sh: changed logic so makeISO9660.in is never changed, even
+   when an interrupt occurs. In older versions, when interrupting this, the
+   makeISO9660.in would get stuck being updated halfway, resulting in newer
+   backups to fail on this script. (liedekef, 5/5/2002)
+v0.6.2
+ - usr/bin/alt-ctrl-del: added mount -o remount,rw / (gdha, 24/04/2002)
+ - Config.sh: added pidof to list of binaries (gdha, 24/04/2002)
+ - make_common.sh: Build_exclude_list: simplified exclude code to allow
+   wildcards in files/dirs to be excluded, see example config for
+   EXCLUDE_LIST in Config.sh (liedekef, 24/04/2002)
+ - rd-base.sh: added Mylex DAC960 hardware RAID controller support as
+   requested by Uwe Hentzschel (gdha, 23/04/2002)
+ - rd-base.sh: Major_nr retrieval bug #546655 added option L to ls - ls -Ll
+   list entries pointed to by symbolic links (gdha, 23/04/2002)
+ - start-restore.sh: fine-tuned lvm stuff (gdha, 19/04/2002)
+ - restore_common.sh: Parse_device: added _ to %137 replacement (gdha, 19/04)
+ - busybox: disabled grep applet as some start-up scripts use special options
+   of grep which are not available with busybox' version (gdha, 19/04/2002)
+ - rd-base.sh: fine-tuning the buildLVM.sh script building (gdha, 19/04/2002)
+ - Did a LVM restore test on 18/04/2002 - almost ok, but need to finetune
+   some scripts - cannot CVS commit as my cable modem (or provider is
+   acting weird).
+ - make_common.sh: ParseDevice: added code to replace _ by %137 (gdha,
+   18/04/2002)
+ - make_common.sh: Find_Linux_kernel: centralized the kernel find code found
+   in test.sh and bootflop.sh and improved it in case grub is used (gdha,
+   17/04/2002)
+ - start-restore.sh: added support for lvm (gdha, 17/04/2002)
+ - rd-base.sh/initrd.sh/test.sh: replaced /dev/ram0 by RAM0 including test
+   block as suggested by jklose iits.de (15/04/2002) 
+ - rd-base.sh/clone-dsk.sh: added major 105 for Compaq hw RAID controller as	
+   suggested by Van Liedekerke Franky (15/04/2002)
+ - rd-base.sh: rmdir rootfs/dev fixes a 'no more space' issue (Stephen Farrugia)
+ - rd-base.sh: tuned permissions on passwd/shadow files (gdha, 11/04/2002)
+   Also, improved the buildLVM.sh script a bit.
+ - test.sh: grep the correct boot kernel (patch for Debian, thx to Brian Hoy)
+ - doc/mkcdrec.8: added initial man page (gdha, 11/04/2002)
+ - Config.sh: added pwdb.conf to list of etc file (gdha, 11/04/2002)
+ - Config.sh: added lvm commands & man pages (gdha, 08/04/2002)
+ - rd-base.sh: added lvm subroutine (gdha, 08/04/2002)
+ - make_common.sh: added function ParseDisk (gdha, 07/04/2002)
+ - splitted up Config.sh in user tuneable parameters, and script/make_common.sh
+   which contains shared functions (gdha, 04/04/2002)
+ - contributions/mkcdrec.sh: simple script to launch mkCDrec from crontab
+   (gdha, 04/04/2002)
+ - added contributions directory for related mkcdrec scripts
+ - busybox/Config.h: comment out INSMOD applet (gdha, 04/04/2002)
+ - Config.sh: added xfs utilities to list of BINARIES (gdha, 04/04/2002)
+ - rd-base.sh: added console_apply_devfsd to pam library loop (thx to
+   tbsky, 04/04/2002)
+v0.6.1
+ - test.sh: improved initrd check for Mandrake 8.x (gdha, 16/03/2002)
+ - *.sh: changed 'df -P' into 'df -kP' for Mandrake 8.x (gdha, 16/03/2002)
+ - rd-base.sh: add EXTRA_OPTS="-f" for xfs filesystems (thx to Thomas Aeby)
+ - rd-base.sh/tar-it.sh: added PreExec and PostExec code (gdha, 15/03/2002)
+ - Config.sh: added PreExec and PostExec command variables (gdha, 15/03/2002)
+ - rd-base.sh: fixed unrecognized devfs software raid devices (gdha, 13/03/2002)
+ - test.sh: added test 16: a scripts/Config.sh a link? (gdha, 12/03/2002)
+ - clone-dsk.sh: applied patch of Kevin.Spicer bmrb.co.uk (12/03/2002)
+ - start-restore.sh: applied patch of Kevin.Spicer bmrb.co.uk (12/03/2002)
+ - test.sh: added test to check filesystem type of initial rd (gdha, 12/03/2002)
+ - rd-base.sh: fixed the tape protected problem (gdha, 12/03/2002)
+ - restore_common.sh: changed mt rew into mt rewind because the real mt command
+   will be used instead of busybox' applet (gdha, 11/03/2002)
+ - rd-base.sh: added mt setdensity and compression off for local tapes only
+ - Config.sh: added TapeDensity variable for mt/tape (gdha, 09/03/2002)
+ - busybox/Config.h: disable MT applet (gdha, 09/03/2002)
+ - Config.sh: added $MT to list of BINARIES (gdha, 09/03/2002)
+ - rd-base.sh: completed the supported ciphers by OpenSSL (gdha, 09/03/2002)
+ - etc/ld.so.conf: added /initrd/lib to the list of libs (gdha, 09/03/2002)
+ - etc/profile: added /etc/recovery to PATH (gdha, 09/03/2002)
+ - Config.sh: added fgrep to the list of binaries (gdha, 07/03/2002)
+ - restore_common.sh: added --overwrite to tar command. Bug fix to restore
+   correct permissions on e.g. /tmp. Submitted by Thomas Aeby <aeby graeff.com>
+ - restore_common.sh: recognize an extended partition of type f
+   (Win95 Extended (LBA)) - reported by  Ron Yorston [ 525963 ] (06/03/2002)
+ - clone-dsk.sh: applied grub patch from Ron Yorston [ 525967 ] (06/03/2002)
+ - start-restore.sh: applied grub patch from Ron Yorston [ 525967 ] (06/03/2002)
+ - initrd.sh: changed the Fail line when running out of space (gdha, 05/03/2002)
+v0.6.0
+ - rd-base.sh: fixed config.h of cutstream [ #517137 ]
+ - clone-dsk.sh: corrected ida/cciss cloning to normal IDE/SCSI disks. Bug
+   report from Franky Van Liedekerke (21/02/2002)
+ - Config.sh: added lilo/grub-config links (gdha, 21/02/2002)
+ - changed the grub/lilo code in all restoring scripts (gdha, 19-21/02/2002)
+ - debugging clone-dsk.sh/restore_common.sh (gdha, 12-13/02/2002)
+ - changed encryption to work with a key file for non-interactive use (gdha)
+ - debugging backup-restore cycles with and without encryption (gdha, days!)
+ - start-restore.sh: changed warn into askyn for reformat disk (gdha, 27/01/02)
+ - BB/Config.sh: comment out ASH [ #494652 ] 
+ - Mike added encryption support with openssl
+ - Config.sh: add symlink to reiserfsck from fsck.reiserfs [ #494766 ]
+ - initrd.sh/Config.sh: applied patch for Debian 3.0 of Luc Saillard
+   <luc.saillard fr.alcove.com> (23/01/2002)
+ - test.sh: improved test 13 which checks on initrd (gdha, 07/01/2002)
+v0.5.9
+ - etc/rc.d/flavors/rc.flavors: force / to be rw (gdha, 02/01/2002)
+ - modules/network: added new module for better network support (pmcia, dhcp)
+ - initrd.sh: added inflate-fs get_module (gdha, 26/12/2001)
+ - rd-base.sh: \' for the buildraid.sh needed (gdha, 21/12/2001)
+ - linuxrc_pre: added sr* to the list of cddev (user request)
+ - usr/doc/howto: added Software RAID howto
+ - Config.sh/rd-base.sh/start-restore.sh: added Software RAID support
+   Did with success a restore of a RAID-1 2*60 Gb system (gdha, 15-17/12/2001)
+v0.5.8
+ - Config.sh: added initlog to list of binaries (gdha, 10/12/2001)
+ - clone-dsk.sh/restore-fs.sh: added IDE RAID support when searching for
+   available disks to do the installation on (gdha, 10/12/2001)
+ - rc.system/rd-base.sh/Config.sh (busybox): df/mount problem fixed (gdha)
+ - rd-base.sh: Make_busybox: rm modprobe link to busybox (rmyorston)
+ - rd-base.sh: fix for ext3 labels (F. Van Liederkerke, 04/12/2001)
+ - Config.sh/initrd.sh: added code for jdb with ext3 (gdha, 04/12/2001)
+ - Config.sh: Mike (flyn) and F. Van Liederkerke added the strip_copy and
+   strip_lib_copy functions in Config.sh to solve the permission denied issue
+ - Makefile: fixed bogus Config.sh file in scripts and added help (gdha, 27/11)
+ - Config.sh: added CD_EJECT definition (gdha, 24/11/2001)
+v0.5.7
+ - linuxrc: cleaned up the chroot code (for pivot_root, gdha, 22/11/2001)
+ - busybox-0.60.2: the latest stabel release (gdha, 21/11/2001)
+ - rd-base.sh: removed >/dev/null with /tmp/bootloader test (fix from
+   from F. Liedekerke, 20/11/2001)
+   Added empty /etc/mtab in Miscellanous (gdha, 20/11/2001)
+ - test.sh: added tmpfs to excluded filesystems for test 12 (gdha, 19/11/2001)
+ - Makefile: make dist excludes CVS directories (gdha, 19/11/2001)
+ - tar-it.sh: fixed #480865 bug report of Matthias Mueller (gdha, 18/11/2001)
+ - rd-base.sh: improved error catching with 'make device' (gdha, 17/11/2001)
+ - makeISO9660.in: better error catching with mkisofs (gdha, 17/11/2001)
+   Add pause to replace CDRW if applicable
+ - rd-base.sh: ;; in case statements were wrongly placed (F. Van Liederkerke)
+   Rewrote the minus_Kb part of excluded directories/mount points (gdha)
+ - linuxrc: added debug code (gdha, 16/11/2001)
+ - mkmakeISO9660.sh: fix bug with '#' after variables which caused an empty
+   makeISO9660.sh file (gdha, 11/11/2001)
+ - modules/functions: RedHat based distro need this script to dot it
+   with e.g. pppoe (at start-up) (gdha, 09/11/2001)
+ - rd-base.sh: cutstream copy check & quoted DEVFSD in if statement
+ - clone-dsk.sh: made it work with Smart-2 RAID disks - patch from 
+   F. Liedekerke, 07/11/2001)
+ - test.sh: improved some tests a bit (feedback from F. Liedekerke, 07/11/2001)
+ - Config.sh: added functions to MKCDREC_MODULES (a dotted script by other
+   modules on RedHat, gdha, 06/11/2001)
+ - rd-base.sh: added kernel_minor_nr var for mkfs -t reiserfs -v 1 in
+   case kernel is 2.2.* based (thx to F.  Liedekerke, 05/11/2001)
+ - restore_common.sh: added source_part_dev variable for Compaq Smart-2
+   arrays support with cloning (reported by F. Liedekerke, 05/11/2001)
+ - restore_common.sh: fix for bugreport #477514 by Ron Yorston (rmyorston)
+ - rd-base.sh: improved inits scripting (gdha, 29/10/2001)
+ - alt-ctrl-del/ctrl-alt-del: mini-script to reboot system in case busybox
+   reboot/halt/shutdown refuses to be usefull (gdha, 28/10/2001)
+ - makeISO9660.in: added code mkisofs with isolinux (gdha, 27/10/2001)
+ - bootflop.sh: added isolinux steps for memtest86 utility if present,
+   code adapt necessary for mkcdrec_utils (next release) gdha 27/10/2001
+ - syslinux-1.63: needs isolinux capabilities for memtest86
+ - makeISO9660.in/mkmakeISO9660.sh/Config.sh: added BLANK_CDRW option, and
+   added the necessary code to listed scripts (gdha, 27/10/2001)
+ - start-restore.sh: used BOOTLOADER value to decide lilo/grub (gdha 27/10/2001)
+ - rd-base.sh: added CheckBootloader code (gdha, 27/10/2001)
+ - rd-base.sh: added cfg2html code (part of utilities - gdha 26/10/2001)
+ - initrd.sh: modification on cramfs from Bernd Broermann (20/10/2001)
+ - start-restore.sh: add initial support for grub (gdha, 18/10/2001)
+ - Config.sh: added grub commands to list of BINARIES (gdha, 18/10/2001)
+v0.5.6
+ - rd-base.sh: Gather_info: added modprobe NETWORK_MODULES (gdha, 14/10/2001)
+   added rm -f ./bin/sh so bash could be linked to sh later
+ - Config.sh/rd-base.sh: added NETWORK_MODULES to allow loadable network
+   modules to be properly inserted at boot time (rc.network) (gdha, 14/10)
+ - busybox: Config.h: disabled BB mount, use the one in our Linux OS as
+   BB mount does not recognize reiserfs, smbfs (gdha, 14/10/2001)
+ - initrd.sh: mkcramfs image is not gzip compatible - force a gzip on it
+ - rd-base.sh: Make_symlinks: check if $to library already exist (gdha, 14/10)
+ - restore_common.sh: Partition_resize_layout: fixed extended_size calculation
+   and some other issues needed for resizing (gdha, 13/10/2001)
+ - initrd.sh: get_module for romfs/cramfs if needed (gdha, 13/10/2001)
+ - initrd.sh: added 2>&1 to .devfsd test (gdha, 13/10/2001)
+ - Config.sh: added cramfs to list of INITRD_FS (gdha, 13/10/2001)
+ - test.sh: added test for cramfs (gdha, 13/10/2001)
+ - initrd.sh: included debian 2.4 patch for cramfs support (thanks to
+   Bernd Broermann <bernd broermann.com>, 13/10/2001)
+ - ansictrl.sh: error: after Enter it stayed bold (gdha, 12/10/2001)
+ - rd-base.sh: Gather_info: added cdrecord -atip -dev=$SCSIDEVICE (gdha, 12/10)
+ - makeISO9660.in: added print function (gdha, 11/10/2001)
+ - test.sh: introduced a better scanbus analyser for cdrecord (gdha, 08/10/2001)
+ - Mike did a lot of work to modularize mkCDrec while booting - lots of
+   changes in inittab, initrd.sh, linuxrc[_pre,_post,_find_and_prep_root],
+   rc,sysinit, etc. (mike flyn.org, 01-08/10/2001)
+ - test.sh: added test 12/13 (gdha, 05/10/2001)
+ - Config.sh: added cfdisk link (gdha, 05/10/2001)
+ - clone-dsk.sh: scanning available scsi disks - for sed change / into ;
+   add cciss and ida Compaq arrays search (reported by  F. Van Liedekerke)
+ - clone-dsk.sh: added improvements provided by rmyorston such "restore all
+   partitions" question and always do "Resize_partition_layout"
+   Remark: when "Resize_partition_layout" seems stable enough would like to
+   incorporate it into start-restore.sh too
+ - ansictrl.sh: added </dev/tty to all read operations (rmyorston)
+ - doc/faqs.html: added Lilo entry written by F. Van Liedekerke
+   <liedekef pandora.be> (03/10/2001)
+ - rd-base.sh: added quotes around fmod (Patch from R. McEoin, 02/10/2001)
+ - rd-base.sh: added libncurses.so.* search for utilities (gdha, 29/09/2001)
+ - initrd.sh: added get_module tmscsim.o (js simulakron.de)
+ - initrd.sh: get_module ide-disk/sd_mod (on request, 29/09/2001)
+ - usr/man/cfdisk.gz: added manpage of cfdisk (gdha, 22/09/2001)
+ - Config.sh: added ext2, ext3, smbfs to modules (gdha, 22/09/2001)
+ - Config.sh: added hdparm, smbmnt, smbmount, smbumount and smbclient to
+   BINARIES and MANPAGES list (gdha, 21/09/2001)
+ - rd-base.sh: added support for Compaq cciss hardware raid controller
+ - start-restore.sh: step 3: add if statement around warning of bigger disk
+   in case src-size equals target-size (gdha, 21/09/2001)
+ - test.sh: ${BURNCDR}" == "y" change "==" into "=" Ron Yorston (rmyorston) 
+   SF#461476 (14/09/2001)
+ - rd-base.sh: Show_mount_output: fix Backup.MntPoints list (bug report from
+   Ron Yorston (rmyorston) SF#461473)
+v0.5.5
+ - restore_common.sh: small fix for almost empty partition (logical part.
+   may not be zero or they will be skipped by sfdisk).
+ - clone-dsk.sh: fixed source disk size selection and target disk size
+ - Config.sh: added modules to list (reiserfs, xfs, jfs, smbfs, minix)
+ - Makefile: added the targets for path, device (gdha, 11/09/2001)
+ - rd-base.sh/tar-it.sh: exported MODE and added support for non-interactive
+   mode for tapes and other paths (gdha, 11/09/2001)
+ - rd-base.sh: fixed bug in LABEL= for unmounted fs (gdha, 10/09/2001)
+ - test.sh: added "file" as a needed executable (gdha, 09/09/2001)
+ - restore_common.sh: Resize_partition_layout: rewritten (gdha, 09/09/2001)
+ - integrated Michael Petullo updates + make CD-ROM (batchmode) (02/09/2001)
+ - etc/rc.d/pcmcia: added test for /sbin/cardmgr, if not quit gracefully
+ - clone-dsk.sh: sfdisk -R behaviour was incorrect, added 2>&1 (30/08/2001)
+ - restore_common.sh: debugged Resize_partition_layout function and improved
+   it here and there (gdha, 30/08/2001)
+ - clone-dsk.sh: rewrote SCSI disk detection for 2.4.x kernels (29/08/2001)
+ - restore-fs.sh: rewrote SCSI disk detection for 2.4.x kernels (29/08/2001)
+ - rd-base.sh: removed "-v" from mkswap.sh file (gdha, 29/08/2001)
+ - initrd.sh: added get_module scsi_mod/ide-mod/ide-probe-mod (27/08/2001)
+ - Config.sh: added ISOVFY variable to test ISO9660 integrity (26/08/2001)
+ - makeISO9660.in: added integrity checking on backups (gdha, 26/08/2001)
+ - rd-base.sh: Show_mount_points: rewrote code to exclude mountpoint which
+   are listed in the EXCLUDE_LIST (gdha, 20/08/2001)
+ - Config.sh: added mc to BINARIES (gdha, 20/08/2001)
+ - busybox: disable modprobe (Mandrake needs to gunzip it) gdha, 17/08/2001
+v0.5.4
+ - etc/rc.d/rc.sysinit: added 2>/dev/null to umount lines and hwclock
+ - commit busybox-0.53(-pre) for devfs support in bugger ram disk
+ - rd-base.sh: added "|head -n 1" to find to solve 3Com modules being cp
+ - rd-base.sh: added "Check_partition_file" routine (gdha, 05/08/2001)
+ - etc/rc.d/rc/sysinit: added -n option to mount to avoid writing to
+   /etc/mtab file (gdha, 04/08/2001)
+ - etc/rc.d/rc.sshd: added link to /etc/ssh/ssh_host_key (gdha, 04/08/2001)
+ - Bug tracing ":Can't open" at end of initrd (Change root to /initrd:
+   error -2). Seems that 2.2.x based kernels with DEVFS support included
+   cannot handle the move of /dev/root to /dev/root.old (30/07/2001 until
+   02/08/2001) - gdha
+ - busybox-0.52: replaced dd.c and vi.c from CVS of 01/08/2001 (gdha)
+ - busybox-0.52: downloaded CVS tar-bal of 30 July to enable devfs support
+   in rd-base (error:  :Can't open) just after changing root to /initrd
+ - bootflop.sh: pivot_root check for kernel_minor_nr > 2
+   devfsd running variable RAM0 for syslinux (gdha, 30/07/2001)
+ - rd-base.sh: added Tape_local_or_remote function for mt command (gdha)
+ - restore_common.sh: added function Tape_local_or_remote for better mt
+   control across networks (gdha, 30/07/2001)
+ - clone-dsk.sh: ROOTSFSopt/BOOTFSopt for mount command (gdha. 29/07/2001)
+ - restore-fs.sh: new script to restore a single filesystem (filesystem
+   can be choosen according the available FS tools) (gdha, 29/07/2001)
+ - start-restore.sh: added ROOTFSopt and BOOTFSopt with mount (29/07/2001)
+ - restore_common.sh: GetScaleFactor: added case $ID for MS$ FS (25/07/2001)
+ - tar-it.sh: moved Build_exclude_list routine to Config.sh (gdha, 25/07/2001)
+ - initrd.sh: DEVFSD check, when DEVFS=1 and devfsd is not running the
+   script will copy the necessary devices (gdha, 24/07/2001)
+ - rd-base.sh: copy_binaries: changed if construction (Hans Bayle changed
+   mkcdrec somehow for Onstream DI30 and flexbackup + perl (24/07/2001)
+   This change was a minor bug, no native support for Onstream yet (gdha)
+ - tar-it.sh: added jfs as a known filesystem to tar (gdha - 24/07/2001)
+ - restore_common.sh: Resize_partition_layout modification by Ron 
+   (rmy tigress.co.uk) now using sectors instead of size (24/07/2001)
+ - restore_common.sh: SelectExtention: * gives error now instead of selecting
+   dd which could lead to corrupting an unknown filesystem (gdha, 24/07/2001)
+ - Config.sh: remove mount/umount from BINARIES, add to LINKS (link to
+   /initrd/bin/mount or umount) - gdha (23/07/2001)
+ - busybox-0.52/Config.h: disable mount/umount (gdha - 23/07/2001)
+ - rd-base.sh: added JFS support (still experimental) - thx to Hubertus Krog-
+   mann (huni hkit.de)
+ - clone-dsk.sh: avoid askyn in while loop as it eats a Line from To_Restore
+   (reported by Michael Kunze - mkunze ambora.de - 23/07/2001)
+ - rd-base.sh/mkmakeISO9660.sh/makeISO9660.in: MKISOFS addons (20/07/2001)
+ - Config.sh: added new keyword MKISOFS to let user decide which mkisofs
+   version he/she wants to use (gdha - 20/07/2001)
+ - clone-dsk.sh: added fsck.[xfs|jfs] (19/07/2001)
+ - start-restore.sh: added fsck.[xfs|jfs] (19/07/2001)
+ - tar-it.sh: added xfs to the list of known filesystems for tar (19/07/2001)
+ - bootflop.sh: resolved the NFS lock problem with bootflop.img (13/07/2001)
+ - busybox-0.52 replaced BB-0.51 (compiles on Caldera 3.1/Slackware 7.1)
+ - initrd.sh: kernel_minor_nr check for pivot_root (when kernel is 2.2.x do
+   NOT cp pivot_root) - gdha (11/07/2001)
+ - rd-base.sh: List_loadable_modules: -follow symlinks disabled as it
+   breaks rh/mdk 2.4.x kernels (it is up to the user to decide until a better
+   solution is given) - (gdha - 11/07/2001)
+ - rd-base.sh: added swapon command to mkswap.sh command [#430758] (11/07/2001)
+ - introduced busybox-0.52 with additional ash.c (r1.9) from BB CVS
+   Needed to make BB compile on Caldera 3.1 (11/07/2001)
+ - Support for XFS added by Mike Flynn (26/06/2001)
+ - etc/rc.d/rc.sysinit: fixed hwclock time setting (gdha - 23/06/2001)
+ - rd-base.sh: added function Check_which_command (gdha - 23/06/2001)
+v0.5.3
+ - clone-dsk.sh: added FSopt (BOOT/ROOT) for doing a successfull lilo,
+   see previous point (22/06/2001)
+ - rd-base.sh/start-restore.sh: added FSopt type to To_Backup/To_Restore
+   for at restore time havinf the correct mount options for e.g. reiserFS
+   bug report [ #435182 ] gdha - 22/06/2001
+ - test.sh: test 2: found problem solved (22/06/2001)
+ - tar-it.sh: solved a failure with tar in combination of bzip2, option "c"
+   must be cutted from CMP_PROG_OPT [bug found by L. Minnaert] (22/06/2001)
+ - makeISO9660.in: burn_cdr: forgot 'a' on tee command, and added a fail-
+   count in routine (gdha, 22/06/2001)
+ - etc/rc.d/rc.sysinit: add symbolic link to /dev/cdrom (suggestion from
+   Ron (rmy tigress.co.uk) (22/06/2001)
+v0.5.2
+ - bootflop.sh: replaced with Rons version to add support for 1.722 Mb
+   physical floppy (18/06/2001)
+ - etc/rc.d/rc.sysinit: fixed loadkeys line and commented hwclock - thx to
+   feedback from Ron (rmy tigress.co.uk) (18/06/2001)
+ - initrd.sh: changed the libbz2.so searching loop (18/06/2001)
+ - initrd.sh: move get_module cdrom one up as suggested by Ron (18/06/2001)
+ - restore_common.sh: remove spave with ID (Resize_partition_layout)
+ - rd-base.sh: gzip/bzip2: make the symlinks gunzip/bunzip2 in the correct
+   directories (distro dependent) - gdha (17/06/2001)
+ - rd-base.sh: resolve Backup_made problem when booting from CD and
+   backup is on tape (17/06/2001)
+ - initrd.sh: link usr/lib to lib for libbz2.so problem of linuxrc [bug
+   report #430758] (17/06/2001)
+ - Config.sh: increase INITRDSIZE from 2500 to 4096 to resolve out of
+   disk space on /initrd (when booting from CD)
+ - rd-base.sh/tar-it.sh/Config.sh: changes for including MS$ partition
+   dumps (too much changed to write down) (14/06/2001)
+ - tar-it.sh: added --one-file-system option to tar bug #433137 (14/06/2001)
+ - test.sh: added minix to test 11 and changed test 3 (13/06/2001)
+ - rd-base.sh: included patch for following symlinks of Bastiaan Niels Veelo
+ - rd-base.sh: added support for ata66 disk controller & disks (11/06/2001)
+ - Config.sh: added gzip to BINARIES + link to gunzip (08/06/2001)
+ - Busybox-0.51/Config.sh: disabled gzip/gunzip (do NOT trust it anymore since
+   my latest tests: gave crc errors, where a normal gunzip worked fine)
+ - made man-page for cksfv (08/06/2001)
+ - busybox-0.51: replaced mount.c with newer version from cvs with better
+   support of the mount -a option (05/06/2001)
+ - rd-base.sh: added ext3 to list of supported root fs on /dev/ram (05/06/2001)
+ - test.sh: improved some tests and added test 11 (04/06/2001)
+ - rd-base.sh: added ext3 filesystem support (31/05/2001)
+ - start-restore.sh/clone-dsk.sh: add fsck at end of restore (30/05/2001)
+ - rd-base.sh: added msdos/vfat filesystem support (30/05/2001)
+               save also the master boot record of boot disk
+ - Config.sh: added 2 missing links for new utilities (30/05/2001)
+v0.5.1
+ - a test CD with devfs support learned me that /etc/modules.devfs was
+   missing in the Config.sh file (gdha - 29/05/2001)
+ - rd-base.sh/Config.sh: added man page support (gdha - 29/05/2001)
+ - usr/man updates for gpart and parted (gdha - 22/05/2001)
+ - Config.sh: added script to BINARIES (useful for debugging - 21/05/2001)
+ - rd-base.sh: added modprobe loop before using /dev/loop (17/05/2001)
+v0.5.0
+ - clone-dsk.sh: added more askyn question (more interactive), gdha (05/05/2001)
+ - clone-dsk.sh: _source_disk and _target_disk lines had a misplaced `
+   Found during test on 03/05/2001 (gdha)
+ - rd-base.sh: rc.network code rewritten to avoid clash with inet6 (02/05/2001)
+ - rd-base.sh: added devfs code in hd_sd_disk_types (02/05/2001)
+ - start-restore.sh: added cd $LOCALFS just before mkdirs.sh (02/05/2001)
+ - Config.sh: cleaned up and added some additional text (02/05/2001)
+ - etc/rc.d/rc.sysinit: added rc.nfs to startup list network (02/05/2001)
+ - BusyBox: replaced gzip.c with rev1.43 and gunzip.c by rev1.51 to solve
+   segmentation fault due to pipe datastream into gunzip (02/05/2001)
+ - test.sh: applied patch from Ward Vandewege w ba.be (28/04/2001)
+ - Makefile: added --owner=root and --group=root to tar (22/04/2001)
+ - linuxrc: /usr/sbin/chroot is from BusyBox (pivot_root - flyn 21/04/2001)
+ - initrd.sh: re-insert libbz2.so do-loop for RH 6 - gdha (20/04/2001)
+ - rd-base.sh: added 2th test for DEVFS=0, now devfsd must run too - gdha
+ - rd-base.sh: move make_sfdisk behind Copy_binaries to avoid problems with
+   sfdisk from RedHat (it is broken) - gdha (20/04/2001)
+ - test.sh: added test 10 (devfs support check - gdha) (20/04/2001)
+ - rd-base.sh: objcopy bash2 to bash because /bin/sh will be linked to
+   /bin/bash (was responsible for /bin/sh bummer message - gdha) (18/04/2001)
+ - linuxrc: Michael is testing pivot_root code (still EXPERIMENTAL)
+ - downloaded mount.c and more.c from BusyBox CVS tree to resolve BB bug
+   #1154. Still need to be tested with boot from CD - gdha (18/04/2001)
+ - makeISO9660.in: made rm -rf $ISOFS_DIR more prudent to avoid accidents
+ - busybox: disabled mount/umount from BB as NFS mounting fails (16/04/2001)
+ - README: added "Be aware" notice - gdha (16/04/2001)
+ - Config.sh: noticed that in MKCDREC_DIR and SCRIPTS both had a Config.sh
+   file. Made a link to be consistent (13/04/2001)
+ - rd-base.sh: added code to avoid CHECK_BAD_BLOCKS with reiserfs (12/04/2001)
+ - bootflop.sh: add test for msdos fs mount failure + more logging (12/04/2001)
+ - busybox-51 snapshot of the day - gdha (11/04/2001)
+ - test.sh: added genromfs test + generic fs checks - gdha (11/04/2001)
+ - initrd.sh: added check for 'genromfs' bin + added 'genromfs' to our bin
+   directory - gdha (11/04/2001)
+ - test.sh: made the output prettier and added test7 - gdha (10/04/2001)
+ - applied the patch made by <mike flyn.org> for v0.4.9 with romfs support
+v0.4.9
+ - initrd.sh: add small fix to mke2fs for INITRDSIZE (Y. Blusseau) (04/04/2001)
+ - test.sh: added test 6 (kernel size) (03/04/2001)
+ - tar-it.sh: df -P changes <mike flyn.org> (03/04/2001)
+ - rd-base.sh: added ROOT_FS support; df -P changes <mike flyn.org> (03/04/2001)
+ - initrd.sh: added ROOT_FS support; added support for module unix.o and
+   cdrom.o + df -P (<mike flyn.org> (03/04/2001))
+ - bootflop.sh: add -P to df - <mike flyn.org> (03/04/2001)
+ - linuxrc: added support for devfs - <mike flyn.org> (03/04/2001)
+ - etc/rc.d/rc.sysinit: added support for devfs - <mike flyn.org> (03/04/2001)
+ - Config.sh: added support for devfs; added ROOT_FS var.; added "-P" to
+   df command (Check_stage_capacity). Patch from W. Michael Petullo
+   <mike flyn.org> (03/04/2001)	
+ - Config.sh: added LANG=C - to avoid language problems with sfdisk and
+   other goodies (Thanks to Yves Blusseau - 03/04/2001)
+ - etc/rc.sysinit: added check for HOSTNAME and added hwclock (02/04/2001)
+ - etc/passwd & shadow: added 'mkcdrec' user and added passwords (02/04/2001)
+ - syslinux-1.54 in favour of syslinux-1.50: some PC have trouble with
+   v1.50 as reported by some users (02/04/2001)
+ - busybox-0.50: init.c replaced with init.c from CVS tree of 
+   http://opensource.lineo.com/cgi-bin/cvsweb/busybox/init.c version 1.129
+   Solves the "bumper message" at boot with CD-ROM on RedHat 6.2 systems
+   (30/03/2001)
+ - rd-base.sh: ida/hd_sd_disk_types - make sure the local DR disk is not 
+   backup-ed up (26/03/2001)
+ - tar-it.sh: verbose logging of tar for local disk did not work (26/03/2001)
+v0.4.8
+ - initrd.sh: added check for isofs module (25/03/2001)
+ - Config.sh: Check_stage_capacity adapted to stop at 100% full ramdisk
+   instead of giving only a warning (24/03/2001)
+ - initrd.sh: adapted the ide-cd/sr_mod part for Mandrake 8.0 (24/03/2001)
+ - rd-base.sh: changed function List_loadable_modules for Mandrake 8.0, the
+   /lib/modules have more sub-directories than original foreseen - used find
+   instead of ls to find sub-directories (24/03/2001)
+ - linuxrc: corrected an error in MODULES if statement (21/03/2001)
+ - doc/*.html: corrected typos (feedback from Willy Wittesaele - 20/03/2001)
+ - rd-base.sh: added Check_for_disk_labels for LABEL issue with /etc/fstab
+   which was introduced by RedHat 7.x (20/03/2001)
+ - start_restore.sh/clone-dsk.sh: introduced the 'mke2label.sh' script (20/03)
+ - restore_common.sh: modified WhichCompressProgram as suggested by
+   Jason Bertschi <phantom spinnakernet.com> (18/03/2001)
+ - cutstream.c/pastestream.c: modified for buffered io in filepipe (v0.3)
+   by Jason Bertschi <phantom spinnakernet.com> (18/03/2001)
+ - nroff -man BusyBox.1 | gunzip -c > ../../usr/man/busybox.gz
+ - Added BusyBox-0.50 for RedHat 7.1 and new features, e.g. ifconfig, route,
+   tftp (16/03/2001)
+ - start-restore.sh/clone-dsk.sh: BOOTDEV/ROOTDEV modifications needed for
+   LILO to function (error report from Yves Blusseau) (13/03/2001)
+ - doc/internals.html: spent some considerable time to write about the
+   internals of mkCDrec (not yet finished - will it be ever?) (12/03/2001)
+ - test.sh: added mt to test 2 (12/03/2001)
+ - bootflop.sh: use RAMDISK_SIZE variable for ramdisk_size in syslinux.cfg
+ - Config.sh: CHECK_BAD_BLOCKS added (thx to Yves Blusseau) (09/03/2001)
+ - rd-base.sh: corrected misspelled functionname ida_disk_types (thx to
+   Yves Blusseau) (09/03/2001)
+ - nroff -man sfdisk.8 | gzip -c >../usr/man/sfdisk.gz
+ - initrd.sh: created small etc/ld.so.conf file for ldconfig (22/02/2001)
+v0.4.7
+ - rd-base.sh: added ida_dsk_types routine (19/02/2001)
+ - bootflop.sh: add LINUX_KERNEL and grap the correct running kernel (19/02/01)
+ - restore_common.sh: debugged Resize_partition_layout routine. Works smoothly
+   now. Did some minor modification to clone-dsk.sh too (18/02/2001)
+ - did lots of small changes in initrd.sh, bootflop.sh, rd-base.sh for
+   a much better disk space monitoring. Now we fail if we run out of space.
+   Added Check_stage_capacity routine to Config.sh (17/02/2001)
+ - linuxrc: added inital loadable modules support for cdrom (16/02/2001)
+ - initrd.sh: added initial loadable modules support for cd-rom (16/02/2001)
+ - Makefile: added 'grep -v ^\#' for ISOFS_DIR & CDREC_ISO_DIR to avoid
+   that comments will be parsed too (16/02/2001)
+ - cksfv: Makefile: CFLAGS+= -Wall -Werror -O2 -g (removed -Werror as
+   redhat 7.0 barfs on it and exits - exit(1) is an implicit declaration
+   of function 'exit') 16/02/2001
+ - mkmakeISO9660.sh: added /tmp/Config.sh workaround for sed (13/02/2001)
+ - changed start-restore.sh, added ParseDevice to restore_common.sh and
+   modified clone-dsk.sh for better ParseDevice (11/02/2001)
+ - changed rd-base.sh and tar-it.sh with a better device parser needed for
+   RedHat 7.x (11/02/2001)
+ - Config.sh: added function ParseDevice (11/02/2001)
+ - etc/rc.d/rc.sshd: changed path to /etc/ssh (10/02/2001)
+ - rd-base.sh: added /etc/ssh/sshd_config for RedHat/Mandrake (10/02/2001)
+ - rd-base.sh: added check to remove BusyBox tar in favour of GNU tar (10/02)
+ - added BusyBox-0.49 (08/02/2001)
+v0.4.6
+ - adapting pastestream-0.2 (04/02/2001)
+ - debugging clone-dsk.sh, ask.for.a.cd.sh, ansictrl.sh, restore_common.sh,
+   start-restore.sh (04/02/2001)
+ - cutstream-0.2: set capacity=maxcdsize in filepipe function (02/02/2001)
+ - makeISO9660.in: removed MAXCDSIZE + CAPACITY setting again because cut-
+   stream did not reread the CAPACITY env. setting correctly so that not
+   100% of CDR was used (but only what was left one step before -/)
+v0.4.5
+ - fix bug with multi-volume CDs (tar-it.sh, makeISO9660.sh and cutstream.c)
+ - tar-it.sh: exclude rules if, then, fi around ${CDREC_ISO_DIR} (30/01/2001)
+ - ask.for.cd.sh: wrote helper script of pastestream (26/01/2001)
+ - pastestream: created initial version of pastestream.c (25/01/2001)
+ - Config.sh: added CMP_PROG variable (gzip/bzip2) compress program with tar
+ - start modifying start-restore.sh (clone-dsk.sh) to handle multi volume
+   CD-ROMs (23-../01/2001)
+v0.4.4
+ - Cksfv (Check SFV) can create simple file verification (SFV) listings
+   (program written by Bryan Call <bc fodder.org>) for having checksum on
+   tar balls residing on the CD-ROM itself (23/01/2001)
+ - Config.sh: LINKS - corrected the links for mkfs.* (were reversed -ai!)
+ - added sshd support (etc/rc.d/rc.sshd, etc/rc.d/rc.sysinit and rd-base.sh)
+ - moved all shell scripts into scripts/ directory and did the necessary
+   modifications to all scripts and Makefile (22/01/2001)
+ - added ReiserFS support to rd-base.sh/Config.sh of Falk Stern (21/01/2001)
+ - start-restore.sh/clone-dsk.sh: bug fixes from Marco Milita (21/01/2001)
+ - rd-base.sh: added TAPE_DEV to etc/recovery (bug report from Marco 21/01)
+ - usr/bin/man: changed $1 to $1.gz (21/01/2001)
+ - rd-base.sh: keep a previous version of mkcdrec.log (21/01/2001)
+ - rd-base.sh: fixed the assumption that disk names are always 3 characters	
+   long (eg. hda), but could be shorter (md) or longer (sdaa) (19/01/2001)
+v0.4.3
+ - multiple changes to tar-it.sh, makeISO9660.in, cutstream.c in order to
+   get multi volume CDs going (10-17/01/2001)
+ - made mkmakeISO9660.sh which reads makeISO9660.in as input and creates
+   makeISO9660.sh
+ - added cutstream-0.1 program, changed Config.sh, changed makefile, added the
+   'Make_cutstream' routine to rd-base.sh, modified MakeISO9660.sh and tar-it.sh
+ - Makefile: remove CDrec.iso from 'all'
+ - rd-base.sh: added the volno line
+ - wrote a new script makeISO9660.sh which make the ISO9660 image CDrec.iso
+   The Makefile will not build the image anymore (step 1 to multi-volume
+   support ;-). Also, added cdrecord to the script
+ - Config.sh: added BURNCDR, CDRECORD, SCSIDEVICE, WRITERSPEED
+v0.4.2
+ - replaced tinylogin-0.78 by tinylogin-0.80
+v0.4.1
+ - rd-base.sh line 644: added 'then' (broke the make process!) (02/01/2001)
+ - start-restore.sh: removed a ' in the welcome line of mkcdrec
+ - rd-base.sh: added cp -R utilities to isofs (29/12/2000)
+ - clone-dsk.sh: added code to change /etc/fstab according source/dest. dev
+ - Config.sh: added mdadd/mdcreate/mdrun/mdstop to BINARIES list (29/12/2000)
+ - Config.sh: added '/lib=libncurses.so.4.2=libncurses.so.4' and 
+   '/sbin=mkdosfs=mkfs.msdos' to LINKS
+ - Config.sh: added hwclock, mkfs.msdos, mkraid, mkreiserfs to BINARIES list
+ - rd-base.sh: at the end added an extra cp usr/bin/man to rootfs in case
+   user added the man executable, which we will not use! (28/12/2000)
+ - added memtest to utilities + man page to usr/man (28/12/2000)
+ - made man pages for recover, gpart & partimage (see utilities/Credits)
+ - added gpart and partimage as static & stripped binary into utilities/
+ - compiled recover-1.2 as static & stripped binary into uitilies directory,
+   cp man-page to our usr/man (27/12/2000)
+ - modified Makefile for utilities distribution (27/12/2000)
+ - added $MKCDREC/utilities directory which will contain optional binaries
+ - usr/bin/man: added shell script to replace binary version of 'man' (less
+   overhead with libraries). On the other hand, man-pages have to be man-ready
+   for usr/bin/man (gzipped text file, or by hand, or automatic). (27/12/2000)
+ - initrd.sh: changed LOG=./mkcdrec.log into LOG=`pwd`/mkcdrec.log (22/12/2000)

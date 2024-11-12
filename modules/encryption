@@ -1,0 +1,3 @@
+BINARIES="$BINARIES openssl"
+
+MAN_PAGES="$MAN_PAGES openssl"

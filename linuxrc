@@ -1,0 +1,220 @@
+#!/bin/sh
+# Copyright (c) 2000-2010 Gratien D'haese - IT3 Consultants
+# Please read LICENSE in the source directory
+
+# This is mkCDrec's linuxrc script.  Though it was designed for mkCDrec,
+# it is meant to be flexible so that it may be used in other applications.
+# Its flexibility comes from three user-definable scripts that are called
+# by this on: linuxrc_pre, linuxrc_find_and_prep_root, and linuxrc_post.
+
+# Linuxrc_pre should perform actions required before changing the system's
+# filesystem root.  In mkCDrec's case, this script finds the CD-ROM which
+# was used by the BIOS to boot the system and mounts it.
+
+# Linux_find_and_prep_root prepares the real root filesystem for mounting.
+# In the case of mkCDrec, this script uncompresses the filesystem image,
+# which is located on the CD-ROM which the BIOS used to boot the system.
+# It is important that this script set the shell variables ROOT_DEV and
+# ROOT_NUM, which are used by linuxrc to change the root filesystem
+# using the kernel's change root or pivot root mechanism.
+
+# Finally, linuxrc_post performs actions which should occur right before
+# init is executed.  In mkCDrec's case, linuxrc_post simply unmounts the
+# CD-ROM which the BIOS used to boot the system.
+#set -x
+echo Executing linuxrc...
+
+# unpack modules (if any)
+OLDPWD=$PWD # pushd is not available in BusyBox's ash.
+cd /lib/modules
+        COMPRESSED_MODULES="`ls *.bz2 2> /dev/null`"
+        if [ ! -z "${COMPRESSED_MODULES}" ]; then
+                /bin/bzip2 -d ${COMPRESSED_MODULES}
+        fi
+        # Load modules needed to boot.
+        . /etc/modules.initrd
+        echo -n "Inserting modules... "
+        # if insmod.old exist, use it!
+        for m in $MODULES; do
+                if [ -x /bin/insmod.old ]; then
+                        /bin/insmod.old $m
+                else
+                        /bin/insmod $m
+                fi
+        done
+cd $OLDPWD
+
+mount -n -t sysfs /sys /sys >/dev/null 2>&1 || mount -t sysfs /sys /sys
+if [ -f /etc/udev/udev.conf ];then
+        . /etc/udev/udev.conf
+fi
+
+[ -x /sbin/udevstart ] && /sbin/udevstart
+
+if [ -f /etc/init.d/boot.udev ]; then
+   /etc/init.d/boot.udev start 
+fi
+
+# Did we get here via OBDR? Check for the existence of /OBDR file.
+if [ -f /OBDR ]; then
+   OBDR=true
+   TAPE_DEV=`cat /OBDR`
+   # wait for slow tape drives
+   echo "Waiting for slow tape drives..."
+   sleep 15
+elif [ -f /EFI ]; then
+   # Check if EFI file exists; IA64: mount /boot/efi and read rd-base from there
+   EFI=true
+   EFI_DEV=`cat /EFI`
+else
+   OBDR=false
+   # wait for usb devices
+   echo "Waiting for slow CD/DVD recorders and USB devices..."
+   sleep 15
+   EFI=false
+   # find CDROM device
+   if [ -x /linuxrc_pre ]; then
+        . /linuxrc_pre
+   fi
+fi # of OBDR
+
+# Check if pivot_root exist (not likely in 2.2 based kernels).
+# if initrd=ramfs then the use of pivot_root is not permitted to switch
+# the the rd-base.img - we have to use the mount --move proecdure
+if [ -x /bin/pivot_root ]; then
+        PIVOT_ROOT=true
+else
+        PIVOT_ROOT=false
+fi
+# the file /ramfs means we're booting using the initramfs method for the
+# initial ramdisk. To load the 2th ramdisk (rd-base.img) we can do this
+# via ext2, minix file system or as tmpfs (ramfs type then)
+if [ -f /ramfs ]; then
+	RAMFS=true
+else
+	RAMFS=false
+fi
+
+# read type of ROOT_FS was selected in the original Config.sh file - type
+# stored in file /.rootfs
+ROOT_FS=`cat /.rootfs`
+
+if [ -x /linuxrc_find_and_prep_root ]; then
+        . /linuxrc_find_and_prep_root
+else
+        echo 'Could not find /linuxrc_find_and_prep_root!'
+        echo Being desparate, I will try to open a /bin/sh.
+        /bin/sh
+fi
+# add section for initial ramdisk booted via ramfs (pivot_root does not
+# work then)
+if [ "$RAMFS" = "true" ]; then
+
+	echo "Using ramfs method..."
+        # /proc/filesystems now needed by BB's mount.
+        echo "Mounting proc (mount -n -t proc none /proc)..."
+        mount -n -t proc none /proc 2>/dev/null || mount -t proc proc /proc
+	echo "Mounting sysfs"
+	mount -n -t sysfs /sys /sys >/dev/null 2>&1
+	if [ "${ROOT_FS}" = "ramfs" ]; then
+	# create a tmpfs type of file system
+	size=`cat /ramfs` # should contain the ramdisk_size
+	echo "Create tmpfs /new_root with size ${size}"
+	mount -n -t tmpfs -o mode=1777,size=${size} tmpfs /new_root
+	# now copy the /mnt/rd-base.img into /new_root
+	echo "Extract the ${INITRDIMG} into /new_root"
+	(cd /new_root; bzip2 -dc ${INITRDIMG} | cpio -i)
+	umount /boot/efi 2>/dev/null	# for IA64 systems using ramfs
+	else
+	# ROOT_FS is not "ramfs"
+        echo "Mounting real root dev (mount -n $ROOT_DEV /new_root)..."
+        mount -n $ROOT_DEV /new_root 2>/dev/null || mount -o ro $ROOT_DEV /new_root
+	fi
+	echo "Show content of /new_root:"
+	ls /new_root
+	# do some trivial checks before move to new_root
+	[ ! -c /new_root/dev/console ] && mknod /new_root/dev/console c 5 1
+	[ ! -c /new_root/dev/null ] && mknod /new_root/dev/null c 1 3
+	echo > /proc/sys/kernel/hotplug
+        echo 0x0100 > /proc/sys/kernel/real-root-dev
+
+	if [ "X$cdbootdev" != "X" ]; then 
+	  echo /dev/$cdbootdev > /new_root/mkcdrecmedia
+	fi
+
+	# umount CD-ROM device
+	echo "Unmounting CD-ROM device /dev/${cdbootdev}"
+	umount /dev/${cdbootdev} || umount -l /dev/${cdbootdev}
+	echo "Unmount /proc and /sys to prepare switch_root"
+        umount /proc || umount -l /proc
+        umount /sys || umount -l /sys
+	echo "Repositioning into /new_root"
+        cd /new_root
+
+	# /dev/console will go away on switch_root
+	exec < dev/console > dev/console 2> dev/console
+
+	echo "Doing a switch_root now..."
+	exec bin/busybox switch_root . linuxrc
+
+fi
+
+if [ "$PIVOT_ROOT" = "true" ]; then
+        echo "Using pivot_root..."
+
+        # /proc/filesystems now needed by BB's mount.
+        echo "Mounting proc (mount -n -t proc none /proc)..."
+        mount -n -t proc none /proc 2>/dev/null || mount -t proc proc /proc
+        echo "Mounting real root dev (mount -n -o ro $ROOT_DEV /new_root)..."
+        mount -n -o ro $ROOT_DEV /new_root 2>/dev/null || mount -o ro $ROOT_DEV /new_root
+        echo 0x0100 > /proc/sys/kernel/real-root-dev
+        umount /proc
+
+        cd /new_root
+        echo "Running pivot_root (/bin/pivot_root . initrd)..."
+        /bin/pivot_root . initrd
+        hash -r # Use, for example /usr/bin/[ instead of /bin/[ now.
+
+        # Kernel automatically mounted devfs the first time, but now we must.
+        if [ -c initrd/dev/.devfsd ]; then
+                echo "Mounting devfs (mount -n -t devfs none dev)..."
+                mount -n -t devfs none dev 2>/dev/null || mount -t devfs none dev
+                # Old /dev (/initrd/dev) needs to be umounted after init 
+                # is executed.  Rc.sysinit can do this.
+        else
+                echo Devfs support does not seem to exist.
+        fi
+        # devpts support needed for Gentoo
+        [ -d /dev/pts ] || mkdir --mode=755 /dev/pts
+        mount -t devpts devpts /dev/pts -o gid=5,mode=620 2>/dev/null || mount -t devpts devpts /dev/pts
+        if [ -x /linuxrc_post ]; then
+                . /linuxrc_post
+        fi
+
+        echo My PID is $$.
+        if [ $$ = 1 ]; then
+                echo "Running init (exec /usr/sbin/chroot . sbin/init dev/console 2>&1)..."
+                exec /usr/sbin/chroot . sbin/init dev/console 2>&1
+        else
+                echo Using bug circumvention for busybox...
+                echo "Running init (exec /usr/sbin/chroot . linuxrc dev/console 2>&1)..."
+                exec /usr/sbin/chroot . linuxrc dev/console 2>&1
+        fi
+        echo 'Init failed!'
+        echo Being desparate, I will try to open a /bin/sh.
+        /bin/sh
+else    # PIVOT_ROOT=false
+        echo "Not using pivot_root..."
+        echo "Mounting proc (mount -n -t proc none /proc)..."
+        mount -n -t proc none /proc 2>/dev/null || mount -t proc proc /proc
+        echo "Setting ROOT_NUM (echo $ROOT_NUM > /proc/sys/kernel/real-root-dev)..."
+        echo $ROOT_NUM > /proc/sys/kernel/real-root-dev
+        umount /proc
+        #umount /dev/$cdbootdev
+fi
+
+if [ -x /linuxrc_post ]; then
+        . /linuxrc_post
+fi
+
+exit 0

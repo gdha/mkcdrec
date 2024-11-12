@@ -1,0 +1,57 @@
+#!/bin/bash
+# Short script to make mkcdrec available through /usr/sbin.
+# Script donated by docsonic (further adapted by gdha)
+# $Id: mkcdrec,v 1.3 2008/02/27 13:13:44 gdha Exp $
+
+MKCDREC_HOME=/var/opt/mkcdrec
+
+rules="To use this script, type mkcdrec [option]. Type mkcdrec -h for a list of options"
+
+if [ `id -u` -ne 0 ]; then
+	echo "You must be root to run mkcdrec!"
+	exit 1
+fi
+
+cd ${MKCDREC_HOME}
+if [ -z $1 ]
+	then
+		echo $rules
+		exit 0
+fi
+
+if [ $1 = -h -o $1 = help ]; then
+	echo 'Options are :'
+	echo 
+		
+	echo 'menu				runs mkcdrec in interactive mode'
+	echo '				and displays the selection menu'
+	echo
+	echo 'CD-ROM				is the same as menu option 2'
+	echo '				(backups included on cd)'
+	echo
+	echo 'rescue				is the same as menu option 1'
+	echo '				(make rescue CD-ROM only)'
+	echo
+	echo 'device				is the same as menu option 4'
+	echo '				(backup on tape)'
+	echo
+	echo 'path DESTINATION_PATH=/foo	is the same as menu option 3'
+	echo '				(backs up to a different destination path)'
+	echo
+	echo 'USB-KEY DEV=/dev/sda1		is the same as menu option 6'
+	echo '				(backs up to USB key on /dev/sda1)'
+	echo
+	echo 'test				run the tests'
+	echo
+	echo 'clean				deletes all temporary files including'
+	echo '				/tmp/*.iso files'
+	echo
+	echo 'help or -h			displays this screen'
+
+elif [ $1 = menu ]; then
+	make
+else
+	make $@
+fi
+
+exit 0
